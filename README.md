@@ -3,5 +3,5 @@ Many students and small teams struggle to stay organized across multiple assignm
 
 Favorite Quotes
 Jackson Eckersley: WHY ARE YOU BUYING CLOTHES AT THE SOUP STORE?!?!?! - TF2 Spy - Krunkididle
-Mduduzi Abdul Mahlangu:
-Nasibu Saidi:
+Mduduzi Abdul Mahlangu: None Currently
+Nasibu Saidi: None Currently
