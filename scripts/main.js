@@ -21,26 +21,47 @@ addTaskBtn.addEventListener("click", function () {
 
     span.textContent = taskText;
 
-    // Create delete button
+    // COMPLETE BUTTON
+    const completeBtn = document.createElement("button");
+
+    completeBtn.textContent = "Complete";
+
+    completeBtn.classList.add("complete-btn");
+
+    completeBtn.addEventListener("click", function () {
+
+        li.classList.toggle("completed");
+
+    });
+
+    // DELETE BUTTON
     const deleteBtn = document.createElement("button");
 
     deleteBtn.textContent = "Delete";
 
     deleteBtn.classList.add("delete-btn");
 
-    // Delete functionality
     deleteBtn.addEventListener("click", function () {
 
         li.remove();
 
     });
 
-    // Add text + button into task item
+    // Button container
+    const buttonContainer = document.createElement("div");
+
+    buttonContainer.classList.add("button-container");
+
+    buttonContainer.appendChild(completeBtn);
+
+    buttonContainer.appendChild(deleteBtn);
+
+    // Add elements to task item
     li.appendChild(span);
 
-    li.appendChild(deleteBtn);
+    li.appendChild(buttonContainer);
 
-    // Add task item to page
+    // Add task to page
     taskList.appendChild(li);
 
     // Clear input

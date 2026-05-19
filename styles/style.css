@@ -92,6 +92,25 @@ main {
     align-items: center;
 }
 
+.button-container {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.complete-btn {
+    background-color: #10b981;
+    color: white;
+    border: none;
+    padding: 0.5rem 0.8rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.complete-btn:hover {
+    background-color: #059669;
+}
+
 .delete-btn {
     background-color: #ef4444;
     color: white;
@@ -104,4 +123,9 @@ main {
 
 .delete-btn:hover {
     background-color: #dc2626;
+}
+
+.completed {
+    opacity: 0.6;
+    text-decoration: line-through;
 }
