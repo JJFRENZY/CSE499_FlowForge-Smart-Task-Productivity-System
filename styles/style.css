@@ -34,7 +34,7 @@ main {
     padding: 3rem;
 }
 
-section {
+.task-container {
     background-color: #2a2a40;
     width: 100%;
     max-width: 700px;
@@ -43,11 +43,47 @@ section {
     box-shadow: 0 4px 20px rgba(0,0,0,0.4);
 }
 
-section h2 {
+.task-container h2 {
     margin-bottom: 1rem;
     color: #a78bfa;
 }
 
-section p {
-    line-height: 1.6;
+.task-form {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.task-form input {
+    flex: 1;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.task-form button {
+    background-color: #7c3aed;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.task-form button:hover {
+    background-color: #6d28d9;
+}
+
+#taskList {
+    list-style: none;
+    margin-top: 2rem;
+}
+
+.task-item {
+    background-color: #3a3a5a;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
 }
