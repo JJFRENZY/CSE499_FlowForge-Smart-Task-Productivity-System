@@ -86,4 +86,22 @@ main {
     padding: 1rem;
     border-radius: 8px;
     margin-bottom: 1rem;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.delete-btn {
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    padding: 0.5rem 0.8rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.delete-btn:hover {
+    background-color: #dc2626;
 }
