@@ -4,39 +4,27 @@
     ViewData["Title"] = "FlowForge";
 }
 
-<div class="page-wrapper">
+<header class="main-header">
+    <h1>FlowForge</h1>
+    <p>Smart Task Productivity System</p>
+</header>
 
-    <header class="main-header">
-        <h1>FlowForge</h1>
-        <p>Smart Task Productivity System</p>
-    </header>
+<main>
+    <section class="task-container">
+        <h2>Add New Task</h2>
 
-    <main>
+        <div class="task-form">
+            <input
+                type="text"
+                id="taskInput"
+                placeholder="Enter a task..."
+            >
 
-        <section class="task-container">
+            <button id="addTaskBtn">
+                Add Task
+            </button>
+        </div>
 
-            <h2>Add New Task</h2>
-
-            <div class="task-form">
-
-                <input
-                    type="text"
-                    id="taskInput"
-                    placeholder="Enter a task..."
-                >
-
-                <button id="addTaskBtn">
-                    Add Task
-                </button>
-
-            </div>
-
-            <ul id="taskList"></ul>
-
-        </section>
-
-    </main>
-
-</div>
-
-<script src="~/js/site.js"></script>
+        <ul id="taskList"></ul>
+    </section>
+</main>
