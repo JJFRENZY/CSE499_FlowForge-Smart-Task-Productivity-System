@@ -1,50 +1,40 @@
-.register-container {
-  max-width: 1200px;
+/* Layout */
+.row {
+  max-width: 666px;
   width: 100%;
   margin: 0 auto;
+  padding: 0 1rem;
 }
 
-.register-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
-  background: #1a1a2e;
-  border-radius: 2rem;
-  overflow: hidden;
-  box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(2px);
-  border: 1px solid rgba(124, 58, 237, 0.3);
+/* Headings */
+h1 {
+  text-align: center;
+  color: #ffffff;
+  padding: 1rem 0;
 }
 
-/* left side: form */
-.form-side {
-  flex: 1.2;
-  padding: 2.5rem 2rem;
-  background: rgba(30, 30, 47, 0.7);
-}
-
-.form-side h2 {
-  font-size: 2rem;
-  font-weight: 700;
-  background: linear-gradient(135deg, #fff, #c4b5fd);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
+h2 {
   margin-bottom: 0.5rem;
+  font-weight: 700;
 }
 
-.form-side .sub {
-  color: #9ca3cf;
-  margin-bottom: 1.8rem;
-  border-left: 3px solid #7c3aed;
-  padding-left: 0.8rem;
+/* Form container spacing */
+form {
+  background: rgba(30, 30, 47, 0.7);
+  padding: 2rem;
+  border-radius: 1.5rem;
+  box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(124, 58, 237, 0.25);
+  backdrop-filter: blur(4px);
 }
 
+/* Divider */
 hr {
   border-color: #2d2d4a;
-  margin: 1rem 0;
+  margin: 1rem 0 1.5rem;
 }
 
+/* Floating inputs */
 .form-floating {
   margin-bottom: 1.2rem;
   position: relative;
@@ -52,14 +42,14 @@ hr {
 
 .form-floating input {
   width: 100%;
-  padding: 1rem 1rem;
+  padding: 1rem;
   background: #2a2a3c;
   border: 1px solid #3a3a54;
   border-radius: 1rem;
   font-size: 1rem;
   color: #fff;
-  transition: all 0.2s;
   outline: none;
+  transition: all 0.2s ease;
 }
 
 .form-floating input:focus {
@@ -68,15 +58,14 @@ hr {
   background: #2f2f44;
 }
 
+/* Floating label effect */
 .form-floating label {
   position: absolute;
   left: 1rem;
   top: 0.9rem;
   color: #9ca3cf;
   pointer-events: none;
-  transition: 0.2s;
-  background: transparent;
-  padding: 0 0.2rem;
+  transition: 0.2s ease;
 }
 
 .form-floating input:focus ~ label,
@@ -84,10 +73,13 @@ hr {
   top: -0.6rem;
   left: 0.8rem;
   font-size: 0.75rem;
-  background: #1e1e2f;
   color: #a78bfa;
+  background: rgba(30, 30, 47, 0.9);
+  padding: 0 0.3rem;
+  border-radius: 0.3rem;
 }
 
+/* Validation */
 .text-danger {
   color: #f87171;
   font-size: 0.8rem;
@@ -95,83 +87,47 @@ hr {
   display: block;
 }
 
-.validation-summary {
+/* Validation summary (fix: your class wasn't used in HTML) */
+.validation-summary-errors {
   background: rgba(239, 68, 68, 0.15);
   border-left: 3px solid #ef4444;
   padding: 0.7rem;
-  border-radius: 12px;
+  border-radius: 0.75rem;
   margin-bottom: 1rem;
+  color: #fecaca;
 }
 
-.btn-register {
-  width: 100%;
+/* Submit button (Bootstrap override polish) */
+.btn-primary {
   background: linear-gradient(95deg, #7c3aed, #6d28d9);
-  color: white;
   border: none;
-  padding: 0.9rem 1rem;
-  font-size: 1rem;
-  font-weight: 600;
   border-radius: 2rem;
-  cursor: pointer;
-  transition: 0.2s;
-  margin-top: 0.8rem;
+  font-weight: 600;
+  transition: 0.2s ease;
+  padding: 0.444rem;
 }
 
-.btn-register:hover {
+.col-md-6 p {
+  text-align: center;
+}
+
+.btn-primary:hover {
   background: linear-gradient(95deg, #8b5cf6, #7c3aed);
   transform: scale(0.98);
 }
 
-/* right side: external logins */
-.external-side {
-  flex: 0.9;
-  background: #16162a;
-  padding: 2.5rem 2rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.external-side h3 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: #e0e7ff;
-}
-
-.external-side hr {
-  margin: 1rem 0;
-}
-
-.external-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
-}
-
-.btn-external {
-  background: #2d2d44;
-  color: #eef2ff;
-  border: 1px solid #4c4c6e;
-  padding: 0.7rem;
+/* External login buttons (Razor generated buttons) */
+#external-account button {
+  width: 100%;
+  margin-bottom: 0.6rem;
   border-radius: 2rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: 0.2s;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
+  background: #2d2d44;
+  border: 1px solid #4c4c6e;
+  color: #eef2ff;
+  transition: 0.2s ease;
 }
 
-.btn-external:hover {
+#external-account button:hover {
   background: #3a3a5a;
   border-color: #7c3aed;
-  color: white;
-}
-
-.info-note {
-  margin-top: 1.8rem;
-  font-size: 0.8rem;
-  color: #7e7ea8;
-  text-align: center;
 }

@@ -6,6 +6,8 @@
   ViewData["Title"] = "FlowForge Tracker";
 }
 
+<link rel="stylesheet" href="~/css/tracker.css">
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,16 +15,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FlowForge</title>
-
-  <link rel="stylesheet" href="~/styles/style.css" asp-append-version="true">
 </head>
 
 <body>
 
   <header>
-    <h1>FlowForge</h1>
-    <p>Smart Task Productivity System</p>
-
+    <div>
+      <h1>FlowForge</h1>
+      <p>Smart Task Productivity System</p>
+    </div>
     <form method="post" asp-area="Identity" asp-page="/Account/Logout">
       <button type="submit">Logout</button>
     </form>
