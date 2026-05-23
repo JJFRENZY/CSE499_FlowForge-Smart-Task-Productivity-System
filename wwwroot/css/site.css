@@ -196,7 +196,7 @@ main {
 }
 
 .signin-link {
-  text-align: center;
+  text-align: left;
   margin-top: 1.6rem;
   font-size: 0.85rem;
   color: #a5b4fc;
@@ -210,7 +210,7 @@ main {
 
 .demo-note {
   font-size: 0.7rem;
-  text-align: center;
+  text-align: left;
   margin-top: 1rem;
   color: #6b7280;
 }

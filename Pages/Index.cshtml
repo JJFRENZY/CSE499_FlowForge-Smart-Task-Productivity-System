@@ -43,25 +43,18 @@
                     <div class="sub">Create your free account – no credit card required</div>
 
                     <!-- Registration form – ready for your C# backend -->
-                    <form method="post" asp-page-handler="Register">
-                        <div class="form-group">
-                            <input type="text" name="FullName" placeholder="Full name" required autocomplete="name">
-                        </div>
-                        <div class="form-group">
-                            <input type="email" name="Email" placeholder="Email address" required autocomplete="email">
-                        </div>
-                        <div class="form-group">
-                            <input type="password" name="Password" placeholder="Create password" required
-                                   autocomplete="new-password">
-                        </div>
-                        <button type="submit" class="signup-btn">✨ Sign up – it's free →</button>
+                    <div>
+                        <a class="signup-btn" href="/Identity/Account/Register">
+                            ✨ Sign up – it's free →
+                        </a>
                         <div class="signin-link">
-                            Already have an account? <a href="#" id="signInMock">Sign in</a>
+                            Already have an account? <a href="/Identity/Account/Login">Sign in</a>
                         </div>
+
                         <div class="demo-note">
                             🔐 Secure · ASP.NET Core backend · SQLite/SQL Server ready
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
             <div class="footer-note">

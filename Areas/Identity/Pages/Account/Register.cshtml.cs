@@ -146,18 +146,7 @@ namespace CSE499_FlowForge_Smart_Task_Productivity_System.Areas.Identity.Pages.A
                         protocol: Request.Scheme
                     );
 
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                    {
-                        return RedirectToPage(
-                            "RegisterConfirmation",
-                            new { email = Input.Email, returnUrl = returnUrl }
-                        );
-                    }
-                    else
-                    {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
-                    }
+                    return RedirectToPage("/Account/Login", new { area = "Identity" });
                 }
                 foreach (var error in result.Errors)
                 {
