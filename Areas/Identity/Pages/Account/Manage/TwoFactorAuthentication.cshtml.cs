@@ -4,6 +4,7 @@
 
 using System;
 using System.Threading.Tasks;
+using CSE499_FlowForge_Smart_Task_Productivity_System.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -18,7 +19,10 @@ namespace CSE499_FlowForge_Smart_Task_Productivity_System.Areas.Identity.Pages.A
         private readonly ILogger<TwoFactorAuthenticationModel> _logger;
 
         public TwoFactorAuthenticationModel(
-            UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ILogger<TwoFactorAuthenticationModel> logger)
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            ILogger<TwoFactorAuthenticationModel> logger
+        )
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -82,7 +86,8 @@ namespace CSE499_FlowForge_Smart_Task_Productivity_System.Areas.Identity.Pages.A
             }
 
             await _signInManager.ForgetTwoFactorClientAsync();
-            StatusMessage = "The current browser has been forgotten. When you login again from this browser you will be prompted for your 2fa code.";
+            StatusMessage =
+                "The current browser has been forgotten. When you login again from this browser you will be prompted for your 2fa code.";
             return RedirectToPage();
         }
     }

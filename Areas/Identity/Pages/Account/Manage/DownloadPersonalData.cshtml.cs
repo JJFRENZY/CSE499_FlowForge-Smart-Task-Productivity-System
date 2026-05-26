@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using CSE499_FlowForge_Smart_Task_Productivity_System.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -22,7 +23,8 @@ namespace CSE499_FlowForge_Smart_Task_Productivity_System.Areas.Identity.Pages.A
 
         public DownloadPersonalDataModel(
             UserManager<ApplicationUser> userManager,
-            ILogger<DownloadPersonalDataModel> logger)
+            ILogger<DownloadPersonalDataModel> logger
+        )
         {
             _userManager = userManager;
             _logger = logger;
@@ -41,12 +43,16 @@ namespace CSE499_FlowForge_Smart_Task_Productivity_System.Areas.Identity.Pages.A
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            _logger.LogInformation("User with ID '{UserId}' asked for their personal data.", _userManager.GetUserId(User));
+            _logger.LogInformation(
+                "User with ID '{UserId}' asked for their personal data.",
+                _userManager.GetUserId(User)
+            );
 
             // Only include personal data for download
             var personalData = new Dictionary<string, string>();
-            var personalDataProps = typeof(ApplicationUser).GetProperties().Where(
-                            prop => Attribute.IsDefined(prop, typeof(PersonalDataAttribute)));
+            var personalDataProps = typeof(ApplicationUser)
+                .GetProperties()
+                .Where(prop => Attribute.IsDefined(prop, typeof(PersonalDataAttribute)));
             foreach (var p in personalDataProps)
             {
                 personalData.Add(p.Name, p.GetValue(user)?.ToString() ?? "null");
@@ -58,10 +64,19 @@ namespace CSE499_FlowForge_Smart_Task_Productivity_System.Areas.Identity.Pages.A
                 personalData.Add($"{l.LoginProvider} external login provider key", l.ProviderKey);
             }
 
-            personalData.Add($"Authenticator Key", await _userManager.GetAuthenticatorKeyAsync(user));
+            personalData.Add(
+                $"Authenticator Key",
+                await _userManager.GetAuthenticatorKeyAsync(user)
+            );
 
-            Response.Headers.TryAdd("Content-Disposition", "attachment; filename=PersonalData.json");
-            return new FileContentResult(JsonSerializer.SerializeToUtf8Bytes(personalData), "application/json");
+            Response.Headers.TryAdd(
+                "Content-Disposition",
+                "attachment; filename=PersonalData.json"
+            );
+            return new FileContentResult(
+                JsonSerializer.SerializeToUtf8Bytes(personalData),
+                "application/json"
+            );
         }
     }
 }

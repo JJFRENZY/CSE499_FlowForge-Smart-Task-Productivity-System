@@ -1,20 +1,17 @@
+using CSE499_FlowForge_Smart_Task_Productivity_System.Data;
+using CSE499_FlowForge_Smart_Task_Productivity_System.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString =
     builder.Configuration.GetConnectionString("ApplicationDbContextConnection")
-    ?? throw new InvalidOperationException(
-        "Connection string 'ApplicationDbContextConnection' not found."
-    );
+    ?? throw new InvalidOperationException("Connection string not found.");
 
-// Add services to the container.
 builder.Services.AddRazorPages();
 
-// Database connection
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(connectionString));
 
-// Identity authentication
 builder
     .Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     {
@@ -27,7 +24,6 @@ builder
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
-// Login redirect path
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Identity/Account/Login";
@@ -35,18 +31,13 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
 
-// app.UseHttpsRedirection();
-
 app.UseRouting();
-
-// IMPORTANT
 app.UseAuthentication();
 app.UseAuthorization();
 

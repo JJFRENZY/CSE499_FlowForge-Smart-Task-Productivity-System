@@ -6,6 +6,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using CSE499_FlowForge_Smart_Task_Productivity_System.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -19,7 +20,8 @@ namespace CSE499_FlowForge_Smart_Task_Productivity_System.Areas.Identity.Pages.A
 
         public IndexModel(
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager
+        )
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -67,10 +69,7 @@ namespace CSE499_FlowForge_Smart_Task_Productivity_System.Areas.Identity.Pages.A
 
             Username = userName;
 
-            Input = new InputModel
-            {
-                PhoneNumber = phoneNumber
-            };
+            Input = new InputModel { PhoneNumber = phoneNumber };
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -102,7 +101,10 @@ namespace CSE499_FlowForge_Smart_Task_Productivity_System.Areas.Identity.Pages.A
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
             if (Input.PhoneNumber != phoneNumber)
             {
-                var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
+                var setPhoneResult = await _userManager.SetPhoneNumberAsync(
+                    user,
+                    Input.PhoneNumber
+                );
                 if (!setPhoneResult.Succeeded)
                 {
                     StatusMessage = "Unexpected error when trying to set phone number.";

@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 using System;
 using System.Threading.Tasks;
+using CSE499_FlowForge_Smart_Task_Productivity_System.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -16,7 +17,8 @@ namespace CSE499_FlowForge_Smart_Task_Productivity_System.Areas.Identity.Pages.A
 
         public PersonalDataModel(
             UserManager<ApplicationUser> userManager,
-            ILogger<PersonalDataModel> logger)
+            ILogger<PersonalDataModel> logger
+        )
         {
             _userManager = userManager;
             _logger = logger;

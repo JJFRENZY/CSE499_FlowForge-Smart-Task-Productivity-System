@@ -5,6 +5,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using CSE499_FlowForge_Smart_Task_Productivity_System.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -19,7 +20,8 @@ namespace CSE499_FlowForge_Smart_Task_Productivity_System.Areas.Identity.Pages.A
 
         public GenerateRecoveryCodesModel(
             UserManager<ApplicationUser> userManager,
-            ILogger<GenerateRecoveryCodesModel> logger)
+            ILogger<GenerateRecoveryCodesModel> logger
+        )
         {
             _userManager = userManager;
             _logger = logger;
@@ -50,7 +52,9 @@ namespace CSE499_FlowForge_Smart_Task_Productivity_System.Areas.Identity.Pages.A
             var isTwoFactorEnabled = await _userManager.GetTwoFactorEnabledAsync(user);
             if (!isTwoFactorEnabled)
             {
-                throw new InvalidOperationException($"Cannot generate recovery codes for user because they do not have 2FA enabled.");
+                throw new InvalidOperationException(
+                    $"Cannot generate recovery codes for user because they do not have 2FA enabled."
+                );
             }
 
             return Page();
@@ -68,13 +72,18 @@ namespace CSE499_FlowForge_Smart_Task_Productivity_System.Areas.Identity.Pages.A
             var userId = await _userManager.GetUserIdAsync(user);
             if (!isTwoFactorEnabled)
             {
-                throw new InvalidOperationException($"Cannot generate recovery codes for user as they do not have 2FA enabled.");
+                throw new InvalidOperationException(
+                    $"Cannot generate recovery codes for user as they do not have 2FA enabled."
+                );
             }
 
             var recoveryCodes = await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 10);
             RecoveryCodes = recoveryCodes.ToArray();
 
-            _logger.LogInformation("User with ID '{UserId}' has generated new 2FA recovery codes.", userId);
+            _logger.LogInformation(
+                "User with ID '{UserId}' has generated new 2FA recovery codes.",
+                userId
+            );
             StatusMessage = "You have generated new recovery codes.";
             return RedirectToPage("./ShowRecoveryCodes");
         }

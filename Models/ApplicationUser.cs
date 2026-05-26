@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 
-public class ApplicationUser : IdentityUser
+namespace CSE499_FlowForge_Smart_Task_Productivity_System.Models // or .Data, but keep consistent
 {
-    public string? FullName { get; set; }
+    public class ApplicationUser : IdentityUser
+    {
+        public string? FullName { get; set; }
+    }
 }

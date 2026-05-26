@@ -5,11 +5,13 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using CSE499_FlowForge_Smart_Task_Productivity_System.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+
 namespace CSE499_FlowForge_Smart_Task_Productivity_System.Areas.Identity.Pages.Account
 {
     public class LoginWithRecoveryCodeModel : PageModel
@@ -21,7 +23,8 @@ namespace CSE499_FlowForge_Smart_Task_Productivity_System.Areas.Identity.Pages.A
         public LoginWithRecoveryCodeModel(
             SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager,
-            ILogger<LoginWithRecoveryCodeModel> logger)
+            ILogger<LoginWithRecoveryCodeModel> logger
+        )
         {
             _signInManager = signInManager;
             _userManager = userManager;
@@ -64,7 +67,9 @@ namespace CSE499_FlowForge_Smart_Task_Productivity_System.Areas.Identity.Pages.A
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
             {
-                throw new InvalidOperationException($"Unable to load two-factor authentication user.");
+                throw new InvalidOperationException(
+                    $"Unable to load two-factor authentication user."
+                );
             }
 
             ReturnUrl = returnUrl;
@@ -82,7 +87,9 @@ namespace CSE499_FlowForge_Smart_Task_Productivity_System.Areas.Identity.Pages.A
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
             {
-                throw new InvalidOperationException($"Unable to load two-factor authentication user.");
+                throw new InvalidOperationException(
+                    $"Unable to load two-factor authentication user."
+                );
             }
 
             var recoveryCode = Input.RecoveryCode.Replace(" ", string.Empty);
@@ -93,7 +100,10 @@ namespace CSE499_FlowForge_Smart_Task_Productivity_System.Areas.Identity.Pages.A
 
             if (result.Succeeded)
             {
-                _logger.LogInformation("User with ID '{UserId}' logged in with a recovery code.", user.Id);
+                _logger.LogInformation(
+                    "User with ID '{UserId}' logged in with a recovery code.",
+                    user.Id
+                );
                 return LocalRedirect(returnUrl ?? Url.Content("~/"));
             }
             if (result.IsLockedOut)
@@ -103,7 +113,10 @@ namespace CSE499_FlowForge_Smart_Task_Productivity_System.Areas.Identity.Pages.A
             }
             else
             {
-                _logger.LogWarning("Invalid recovery code entered for user with ID '{UserId}' ", user.Id);
+                _logger.LogWarning(
+                    "Invalid recovery code entered for user with ID '{UserId}' ",
+                    user.Id
+                );
                 ModelState.AddModelError(string.Empty, "Invalid recovery code entered.");
                 return Page();
             }

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using CSE499_FlowForge_Smart_Task_Productivity_System.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +24,8 @@ namespace CSE499_FlowForge_Smart_Task_Productivity_System.Areas.Identity.Pages.A
         public ExternalLoginsModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            IUserStore<ApplicationUser> userStore)
+            IUserStore<ApplicationUser> userStore
+        )
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -71,14 +73,20 @@ namespace CSE499_FlowForge_Smart_Task_Productivity_System.Areas.Identity.Pages.A
             string passwordHash = null;
             if (_userStore is IUserPasswordStore<ApplicationUser> userPasswordStore)
             {
-                passwordHash = await userPasswordStore.GetPasswordHashAsync(user, HttpContext.RequestAborted);
+                passwordHash = await userPasswordStore.GetPasswordHashAsync(
+                    user,
+                    HttpContext.RequestAborted
+                );
             }
 
             ShowRemoveButton = passwordHash != null || CurrentLogins.Count > 1;
             return Page();
         }
 
-        public async Task<IActionResult> OnPostRemoveLoginAsync(string loginProvider, string providerKey)
+        public async Task<IActionResult> OnPostRemoveLoginAsync(
+            string loginProvider,
+            string providerKey
+        )
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -105,7 +113,11 @@ namespace CSE499_FlowForge_Smart_Task_Productivity_System.Areas.Identity.Pages.A
 
             // Request a redirect to the external login provider to link a login for the current user
             var redirectUrl = Url.Page("./ExternalLogins", pageHandler: "LinkLoginCallback");
-            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl, _userManager.GetUserId(User));
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(
+                provider,
+                redirectUrl,
+                _userManager.GetUserId(User)
+            );
             return new ChallengeResult(provider, properties);
         }
 
@@ -121,13 +133,16 @@ namespace CSE499_FlowForge_Smart_Task_Productivity_System.Areas.Identity.Pages.A
             var info = await _signInManager.GetExternalLoginInfoAsync(userId);
             if (info == null)
             {
-                throw new InvalidOperationException($"Unexpected error occurred loading external login info.");
+                throw new InvalidOperationException(
+                    $"Unexpected error occurred loading external login info."
+                );
             }
 
             var result = await _userManager.AddLoginAsync(user, info);
             if (!result.Succeeded)
             {
-                StatusMessage = "The external login was not added. External logins can only be associated with one account.";
+                StatusMessage =
+                    "The external login was not added. External logins can only be associated with one account.";
                 return RedirectToPage();
             }
 

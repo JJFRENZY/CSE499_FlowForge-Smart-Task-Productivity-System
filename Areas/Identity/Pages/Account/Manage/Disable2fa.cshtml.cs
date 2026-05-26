@@ -4,6 +4,7 @@
 
 using System;
 using System.Threading.Tasks;
+using CSE499_FlowForge_Smart_Task_Productivity_System.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -18,7 +19,8 @@ namespace CSE499_FlowForge_Smart_Task_Productivity_System.Areas.Identity.Pages.A
 
         public Disable2faModel(
             UserManager<ApplicationUser> userManager,
-            ILogger<Disable2faModel> logger)
+            ILogger<Disable2faModel> logger
+        )
         {
             _userManager = userManager;
             _logger = logger;
@@ -41,7 +43,9 @@ namespace CSE499_FlowForge_Smart_Task_Productivity_System.Areas.Identity.Pages.A
 
             if (!await _userManager.GetTwoFactorEnabledAsync(user))
             {
-                throw new InvalidOperationException($"Cannot disable 2FA for user as it's not currently enabled.");
+                throw new InvalidOperationException(
+                    $"Cannot disable 2FA for user as it's not currently enabled."
+                );
             }
 
             return Page();
@@ -61,8 +65,12 @@ namespace CSE499_FlowForge_Smart_Task_Productivity_System.Areas.Identity.Pages.A
                 throw new InvalidOperationException($"Unexpected error occurred disabling 2FA.");
             }
 
-            _logger.LogInformation("User with ID '{UserId}' has disabled 2fa.", _userManager.GetUserId(User));
-            StatusMessage = "2fa has been disabled. You can reenable 2fa when you setup an authenticator app";
+            _logger.LogInformation(
+                "User with ID '{UserId}' has disabled 2fa.",
+                _userManager.GetUserId(User)
+            );
+            StatusMessage =
+                "2fa has been disabled. You can reenable 2fa when you setup an authenticator app";
             return RedirectToPage("./TwoFactorAuthentication");
         }
     }
