@@ -1,30 +1,75 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "FlowForge";
+    ViewData["Title"] = "FlowForge – Smart Task Productivity";
 }
+<!DOCTYPE html>
+<html lang="en">
 
-<header class="main-header">
-    <h1>FlowForge</h1>
-    <p>Smart Task Productivity System</p>
-</header>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+</head>
 
-<main>
-    <section class="task-container">
-        <h2>Add New Task</h2>
+<body>
 
-        <div class="task-form">
-            <input
-                type="text"
-                id="taskInput"
-                placeholder="Enter a task..."
-            >
+    <header class="main-header">
+        <h1>FlowForge ⚡</h1>
+        <p>Smart Task Productivity System</p>
+    </header>
 
-            <button id="addTaskBtn">
-                Add Task
-            </button>
+    <main>
+        <div class="landing-container">
+            <div class="split-layout">
+                <!-- Left: core value + features (aligned with project scope) -->
+                <div class="hero">
+                    <h2>Forge your workflow.<br>Master your day.</h2>
+                    <p>
+                        Tired of scattered tasks and missed deadlines?<br>
+                        FlowForge helps students & small teams work smarter — not just track tasks.
+                    </p>
+                    <ul class="feature-list">
+                        <li>📋 Task creation, categories & priorities</li>
+                        <li>📅 Due dates & weekly workload tracking</li>
+                        <li>📊 Productivity analytics & smart reminders</li>
+                        <li>👥 Optional team collaboration boards</li>
+                    </ul>
+                </div>
+
+                <!-- Right: registration / sign-in (prominent) -->
+                <div class="signup-card">
+                    <h3>Get started</h3>
+                    <div class="sub">Create your free account – no credit card required</div>
+
+                    <!-- Registration form – ready for your C# backend -->
+                    <div>
+                        <a class="signup-btn" href="/Identity/Account/Register">
+                            ✨ Sign up – it's free →
+                        </a>
+                        <div class="signin-link">
+                            Already have an account? <a href="/Identity/Account/Login">Sign in</a>
+                        </div>
+
+                        <div class="demo-note">
+                            🔐 Secure · ASP.NET Core backend · SQLite/SQL Server ready
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-note">
+                © 2025 FlowForge — Built for CSE 499 | Smart Task Productivity
+            </div>
         </div>
+    </main>
 
-        <ul id="taskList"></ul>
-    </section>
-</main>
+    <!-- Minimal demo / placeholder for sign-in (remove when backend is wired) -->
+    <script>
+            document.getElementById('signInMock')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                alert('Sign-in page will be available soon. For now, please register to start using FlowForge.');
+            });
+    </script>
+</body>
+
+</html>

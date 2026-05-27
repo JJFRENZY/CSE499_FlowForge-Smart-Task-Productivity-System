@@ -1,0 +1,69 @@
+/* Page wrapper */
+.logout-container {
+  max-width: 500px;
+  margin: 5rem auto;
+  padding: 2.5rem;
+  text-align: center;
+
+  background: rgba(30, 30, 47, 0.75);
+  border: 1px solid rgba(124, 58, 237, 0.25);
+  border-radius: 1.5rem;
+  box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(6px);
+  color: #e5e7eb;
+}
+
+/* Title */
+.logout-container h1 {
+  color: #fff;
+  margin-bottom: 1rem;
+}
+
+/* Text */
+.logout-text,
+.logout-success {
+  color: #c7c7e2;
+  margin-bottom: 2rem;
+}
+
+/* Button group */
+.logout-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Logout button */
+.btn-logout {
+  background: linear-gradient(95deg, #ef4444, #dc2626);
+  border: none;
+  color: #fff;
+  padding: 0.8rem 1.4rem;
+  border-radius: 2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-logout:hover {
+  transform: scale(0.97);
+  background: linear-gradient(95deg, #f87171, #ef4444);
+}
+
+/* Home button */
+.btn-home {
+  background: #2d2d44;
+  border: 1px solid #4c4c6e;
+  color: #eef2ff;
+  padding: 0.8rem 1.4rem;
+  border-radius: 2rem;
+  text-decoration: none;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.btn-home:hover {
+  background: #3a3a5a;
+  border-color: #7c3aed;
+}

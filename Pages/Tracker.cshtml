@@ -1,0 +1,212 @@
+@page
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Authorization
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@{
+    var requestToken = Antiforgery.GetAndStoreTokens(HttpContext).RequestToken;
+}
+<meta name="csrf-token" content="@requestToken" />
+
+@model TrackerModel
+
+@{
+    ViewData["Title"] = "Task Dashboard";
+}
+
+<link rel="stylesheet" href="~/css/tracker.css" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<header>
+    <div>
+        <h1>📊 Task Dashboard</h1>
+        <p>Your personal task hub</p>
+    </div>
+    <form asp-area="Identity" asp-page="/Account/Logout" method="post">
+        <button type="submit">🚪 Logout</button>
+    </form>
+</header>
+
+<main>
+    <div class="task-container">
+        <!-- ========= TASK MANAGER ========= -->
+        <h2>✏️ Manage Tasks</h2>
+        <div class="task-form">
+            <input type="text" id="taskInput" placeholder="Write a new task..." />
+            <button id="addTaskBtn">➕ Add Task</button>
+        </div>
+
+        <ul id="taskList">
+            @foreach (var task in Model.Tasks)
+            {
+                <li data-id="@task.Id" class="@(task.IsCompleted ? "completed" : "")">
+                    <span>@task.Title</span>
+                    <div class="button-container">
+                        <button class="complete-btn">✔️</button>
+                        <button class="delete-btn">🗑️</button>
+                    </div>
+                </li>
+            }
+        </ul>
+        <hr class="divider" />
+
+        <div class="chart-flex">
+
+            <div class="dashboard-grid">
+                <div class="stat-card">
+                    <h3>📋 Total Tasks:</h3>
+                    <p id="totalTasks">@Model.TotalTasks</p>
+                </div>
+                <div class="stat-card">
+                    <h3>✅ Completed:</h3>
+                    <p id="completedTasks">@Model.CompletedTasks</p>
+                </div>
+                <div class="stat-card">
+                    <h3>⏳ Pending:</h3>
+                    <p id="pendingTasks">@Model.PendingTasks</p>
+                </div>
+                <div class="stat-card">
+                    <h3>📈 Completion Rate:</h3>
+                    <p id="completionRate">@Model.CompletionRate.ToString("F1")%</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: @Model.CompletionRate%"></div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="statusChart" width="100" height="100"></canvas>
+            </div>
+
+        </div>
+
+    </div>
+</main>
+
+<script>
+    // Anti-forgery token for AJAX POSTs
+    const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+
+    
+    function getCsrfToken() {
+    return document.querySelector('meta[name="csrf-token"]')?.content || "";
+    }
+
+    let chart;
+
+    // Helper to update UI (task list + dashboard stats + chart)
+    function refreshUI(data) {
+    // update task list
+    const taskList = document.getElementById('taskList');
+    taskList.innerHTML = '';
+    data.tasks.forEach(task => {
+    const li = document.createElement('li');
+    li.dataset.id = task.id;
+    if (task.isCompleted) li.classList.add('completed');
+    li.innerHTML = `
+    <span>${escapeHtml(task.title)}</span>
+    <div class="button-container">
+    <button class="complete-btn">✔️</button>
+    <button class="delete-btn">🗑️</button>
+    </div>
+    `;
+    taskList.appendChild(li);
+    });
+
+    // update stats cards
+    document.getElementById('totalTasks').innerText = data.stats.total;
+    document.getElementById('completedTasks').innerText = data.stats.completed;
+    document.getElementById('pendingTasks').innerText = data.stats.pending;
+    const rate = data.stats.completionRate.toFixed(1);
+    document.getElementById('completionRate').innerHTML = `${rate}%`;
+    document.querySelector('.progress-fill').style.width = `${data.stats.completionRate}%`;
+
+    // update pie chart
+    if (chart) chart.destroy();
+    const ctx = document.getElementById('statusChart').getContext('2d');
+    chart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+    labels: ['Completed', 'Pending'],
+    datasets: [{
+    data: [data.stats.completed, data.stats.pending],
+    backgroundColor: ['#50c878', '#ef4444'],
+    borderWidth: 0
+    }]
+    },
+    options: {
+    responsive: true,
+    plugins: { legend: { position: 'bottom', labels: { color: '#e5e7eb' } } }
+    }
+    });
+    }
+
+    function escapeHtml(str) {
+    return str.replace(/[&<>]/g, function (m) {
+    if (m === '&') return '&amp;';
+    if (m === '<') return '&lt;';
+    if (m === '>') return '&gt;';
+    return m;
+    });
+    }
+
+    // API calls
+    async function callHandler(handler, payload) {
+    const res = await fetch(`?handler=${handler}`, {
+    method: 'POST',
+    headers: {
+    'Content-Type': 'application/json',
+    'RequestVerificationToken': getCsrfToken()
+    },
+    body: JSON.stringify(payload)
+    });
+    if (res.ok) {
+    const data = await res.json();
+    refreshUI(data);
+    } else {
+    alert('Something went wrong');
+    }
+    }
+
+    // Event listeners
+    document.getElementById('addTaskBtn').addEventListener('click', () => {
+    const input = document.getElementById('taskInput');
+    const title = input.value.trim();
+    if (!title) return;
+    callHandler('AddTask', { title });
+    input.value = '';
+    });
+
+    document.getElementById('taskList').addEventListener('click', (e) => {
+    const btn = e.target;
+    const li = btn.closest('li');
+    if (!li) return;
+    const taskId = parseInt(li.dataset.id);
+    if (btn.classList.contains('delete-btn')) {
+    callHandler('DeleteTask', { taskId });
+    } else if (btn.classList.contains('complete-btn')) {
+    callHandler('ToggleTask', { taskId });
+    }
+    });
+
+    // initial chart render
+    window.addEventListener('load', () => {
+    const ctx = document.getElementById('statusChart').getContext('2d');
+    const completed = parseInt(document.getElementById('completedTasks').innerText);
+    const pending = parseInt(document.getElementById('pendingTasks').innerText);
+    chart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+    labels: ['Completed', 'Pending'],
+    datasets: [{
+    data: [completed, pending],
+    backgroundColor: ['#50c878', '#ef4444'],
+    borderWidth: 0
+    }]
+    },
+    options: {
+    responsive: true,
+    plugins: { legend: { position: 'bottom', labels: { color: '#e5e7eb' } } }
+    }
+    });
+    });
+</script>
