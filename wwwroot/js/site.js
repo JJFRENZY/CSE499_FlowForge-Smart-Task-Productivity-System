@@ -10,7 +10,7 @@ loadTasks();
 // ADD TASK
 addTaskBtn.addEventListener("click", function () {
 
-    const taskText = taskInput.value;
+    const taskText = taskInput.value.trim();
 
     const priority = prioritySelect.value;
 
@@ -32,7 +32,28 @@ addTaskBtn.addEventListener("click", function () {
 
     dueDateInput.value = "";
 
+    prioritySelect.value = "low";
+
 });
+
+// CHECK IF TASK IS OVERDUE
+function isOverdue(dueDate) {
+
+    if (!dueDate) {
+        return false;
+    }
+
+    const today = new Date();
+
+    today.setHours(0, 0, 0, 0);
+
+    const due = new Date(dueDate + "T00:00:00");
+
+    due.setHours(0, 0, 0, 0);
+
+    return due < today;
+
+}
 
 // CREATE TASK
 function createTask(taskText, completedStatus, priority, dueDate) {
@@ -103,6 +124,12 @@ function createTask(taskText, completedStatus, priority, dueDate) {
 
         dueDateLabel.classList.add("due-date");
 
+        if (isOverdue(dueDate) && !completedStatus) {
+
+            dueDateLabel.classList.add("overdue");
+
+        }
+
         dueDateLabel.textContent = `Due: ${dueDate}`;
 
         metaContainer.appendChild(dueDateLabel);
@@ -125,6 +152,22 @@ function createTask(taskText, completedStatus, priority, dueDate) {
     completeBtn.addEventListener("click", function () {
 
         li.classList.toggle("completed");
+
+        const dueDateLabel = li.querySelector(".due-date");
+
+        if (dueDateLabel) {
+
+            if (li.classList.contains("completed")) {
+
+                dueDateLabel.classList.remove("overdue");
+
+            } else if (isOverdue(dueDate)) {
+
+                dueDateLabel.classList.add("overdue");
+
+            }
+
+        }
 
         saveTasks();
 
