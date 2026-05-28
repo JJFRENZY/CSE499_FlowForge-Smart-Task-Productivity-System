@@ -1,6 +1,7 @@
 ﻿const addTaskBtn = document.getElementById("addTaskBtn");
 const taskInput = document.getElementById("taskInput");
 const prioritySelect = document.getElementById("prioritySelect");
+const dueDateInput = document.getElementById("dueDateInput");
 const taskList = document.getElementById("taskList");
 
 // LOAD TASKS
@@ -13,6 +14,8 @@ addTaskBtn.addEventListener("click", function () {
 
     const priority = prioritySelect.value;
 
+    const dueDate = dueDateInput.value;
+
     if (taskText === "") {
 
         alert("Please enter a task.");
@@ -21,16 +24,18 @@ addTaskBtn.addEventListener("click", function () {
 
     }
 
-    createTask(taskText, false, priority);
+    createTask(taskText, false, priority, dueDate);
 
     saveTasks();
 
     taskInput.value = "";
 
+    dueDateInput.value = "";
+
 });
 
 // CREATE TASK
-function createTask(taskText, completedStatus, priority) {
+function createTask(taskText, completedStatus, priority, dueDate) {
 
     const li = document.createElement("li");
 
@@ -42,15 +47,27 @@ function createTask(taskText, completedStatus, priority) {
 
     }
 
-    // LEFT SIDE CONTAINER
+    // LEFT SIDE
     const leftContainer = document.createElement("div");
 
     leftContainer.classList.add("task-left");
 
+    // TASK INFO
+    const taskInfo = document.createElement("div");
+
+    taskInfo.classList.add("task-info");
+
     // TASK TEXT
     const span = document.createElement("span");
 
+    span.classList.add("task-text");
+
     span.textContent = taskText;
+
+    // META CONTAINER
+    const metaContainer = document.createElement("div");
+
+    metaContainer.classList.add("meta-container");
 
     // PRIORITY LABEL
     const priorityLabel = document.createElement("span");
@@ -77,9 +94,26 @@ function createTask(taskText, completedStatus, priority) {
 
     }
 
-    leftContainer.appendChild(span);
+    metaContainer.appendChild(priorityLabel);
 
-    leftContainer.appendChild(priorityLabel);
+    // DUE DATE LABEL
+    if (dueDate !== "") {
+
+        const dueDateLabel = document.createElement("span");
+
+        dueDateLabel.classList.add("due-date");
+
+        dueDateLabel.textContent = `Due: ${dueDate}`;
+
+        metaContainer.appendChild(dueDateLabel);
+
+    }
+
+    taskInfo.appendChild(span);
+
+    taskInfo.appendChild(metaContainer);
+
+    leftContainer.appendChild(taskInfo);
 
     // COMPLETE BUTTON
     const completeBtn = document.createElement("button");
@@ -138,7 +172,7 @@ function saveTasks() {
 
     allTasks.forEach(function (task) {
 
-        const taskText = task.querySelector(".task-left span").textContent;
+        const taskText = task.querySelector(".task-text").textContent;
 
         const completed = task.classList.contains("completed");
 
@@ -158,11 +192,22 @@ function saveTasks() {
 
         }
 
+        let dueDate = "";
+
+        const dueDateElement = task.querySelector(".due-date");
+
+        if (dueDateElement) {
+
+            dueDate = dueDateElement.textContent.replace("Due: ", "");
+
+        }
+
         tasks.push({
 
             text: taskText,
             completed: completed,
-            priority: priority
+            priority: priority,
+            dueDate: dueDate
 
         });
 
@@ -187,7 +232,12 @@ function loadTasks() {
 
     tasks.forEach(function (task) {
 
-        createTask(task.text, task.completed, task.priority);
+        createTask(
+            task.text,
+            task.completed,
+            task.priority,
+            task.dueDate
+        );
 
     });
 

@@ -83,10 +83,11 @@ main {
   display: flex;
   gap: 1rem;
   margin-bottom: 2rem;
+  flex-wrap: wrap;
 }
 
-.task-form input {
-  flex: 1;
+.task-form input,
+#prioritySelect {
   padding: 0.9rem 1rem;
   border-radius: 1rem;
   border: 1px solid #3a3a54;
@@ -96,18 +97,14 @@ main {
   transition: 0.2s;
 }
 
-.task-form input:focus {
+.task-form input:focus,
+#prioritySelect:focus {
   border-color: #8b5cf6;
   box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25);
 }
 
-#prioritySelect {
-  padding: 0.9rem;
-  border-radius: 1rem;
-  border: 1px solid #3a3a54;
-  background: #2a2a3c;
-  color: white;
-  font-size: 1rem;
+#taskInput {
+  flex: 1;
 }
 
 .task-form button {
@@ -161,6 +158,22 @@ main {
   gap: 1rem;
 }
 
+.task-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.task-text {
+  font-size: 1rem;
+}
+
+.meta-container {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
 /* PRIORITY LABEL */
 
 .priority-label {
@@ -181,6 +194,16 @@ main {
 
 .priority-label.high {
   background-color: #ef4444;
+}
+
+/* DUE DATE */
+
+.due-date {
+  background: #374151;
+  color: #d1d5db;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
 }
 
 /* BUTTONS */
