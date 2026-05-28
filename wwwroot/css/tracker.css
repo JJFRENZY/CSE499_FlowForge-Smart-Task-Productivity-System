@@ -175,14 +175,16 @@ main {
     border-radius: 999px;
     font-size: 0.75rem;
     font-weight: bold;
+    transition: 0.2s;
 }
 
 /* OVERDUE */
 
 .due-date.overdue {
-    background: #7f1d1d;
-    color: #fecaca;
-    border: 1px solid #ef4444;
+    background: #ef4444 !important;
+    color: white !important;
+    border: 1px solid #ffb4b4 !important;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
 }
 
 /* BUTTONS */
