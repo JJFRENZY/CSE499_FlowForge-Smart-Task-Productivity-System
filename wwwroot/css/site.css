@@ -60,168 +60,6 @@ main {
   color: #e2e8ff;
 }
 
-/* LANDING CONTAINER */
-
-.landing-container {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.split-layout {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2.5rem;
-  align-items: center;
-  justify-content: center;
-}
-
-/* HERO SECTION */
-
-.hero {
-  flex: 1.2;
-  min-width: 260px;
-}
-
-.hero h2 {
-  font-size: 2.5rem;
-  font-weight: 700;
-  background: linear-gradient(to right, #c4b5fd, #a78bfa);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  margin-bottom: 1.2rem;
-}
-
-.hero p {
-  font-size: 1.1rem;
-  color: #cbd5e6;
-  margin-bottom: 2rem;
-  max-width: 90%;
-}
-
-/* FEATURE LIST */
-
-.feature-list {
-  list-style: none;
-  margin-top: 1.8rem;
-}
-
-.feature-list li {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
-  font-size: 1rem;
-}
-
-.feature-list li::before {
-  content: "✓";
-  background: #7c3aed;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.85rem;
-  color: white;
-  flex-shrink: 0;
-}
-
-/* SIGNUP CARD */
-
-.signup-card {
-  flex: 0.9;
-  min-width: 300px;
-  background: #1e1e2f;
-  border-radius: 2rem;
-  padding: 2rem 1.8rem;
-  box-shadow:
-    0 20px 35px -12px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(124, 58, 237, 0.2);
-  transition: transform 0.2s ease;
-}
-
-.signup-card:hover {
-  transform: translateY(-4px);
-}
-
-.signup-card h3 {
-  font-size: 1.9rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: #f0f0ff;
-}
-
-.signup-card .sub {
-  color: #9ca3cf;
-  margin-bottom: 1.8rem;
-  font-size: 0.9rem;
-  border-left: 3px solid #7c3aed;
-  padding-left: 0.8rem;
-}
-
-.form-group {
-  margin-bottom: 1.2rem;
-}
-
-.signup-card input {
-  width: 100%;
-  padding: 0.9rem 1rem;
-  background: #2a2a3c;
-  border: 1px solid #3a3a54;
-  border-radius: 1rem;
-  font-size: 1rem;
-  color: #fff;
-  transition: all 0.2s;
-  outline: none;
-}
-
-.signup-card input:focus {
-  border-color: #8b5cf6;
-  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.3);
-  background: #2f2f44;
-}
-
-.signup-btn {
-  width: 100%;
-  background: linear-gradient(95deg, #7c3aed, #6d28d9);
-  color: white;
-  border: none;
-  padding: 0.9rem 1rem;
-  font-size: 1rem;
-  font-weight: 600;
-  border-radius: 2rem;
-  cursor: pointer;
-  transition: 0.2s;
-  margin-top: 0.5rem;
-}
-
-.signup-btn:hover {
-  background: linear-gradient(95deg, #8b5cf6, #7c3aed);
-  transform: scale(0.98);
-}
-
-.signin-link {
-  text-align: left;
-  margin-top: 1.6rem;
-  font-size: 0.85rem;
-  color: #a5b4fc;
-}
-
-.signin-link a {
-  color: #c4b5fd;
-  text-decoration: none;
-  border-bottom: 1px dotted #7c3aed;
-}
-
-.demo-note {
-  font-size: 0.7rem;
-  text-align: left;
-  margin-top: 1rem;
-  color: #6b7280;
-}
-
 /* TASK CONTAINER */
 
 .task-container {
@@ -261,6 +99,15 @@ main {
 .task-form input:focus {
   border-color: #8b5cf6;
   box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25);
+}
+
+#prioritySelect {
+  padding: 0.9rem;
+  border-radius: 1rem;
+  border: 1px solid #3a3a54;
+  background: #2a2a3c;
+  color: white;
+  font-size: 1rem;
 }
 
 .task-form button {
@@ -306,6 +153,36 @@ main {
   background: #2f2f44;
 }
 
+/* LEFT SIDE */
+
+.task-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* PRIORITY LABEL */
+
+.priority-label {
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: white;
+}
+
+.priority-label.low {
+  background-color: #10b981;
+}
+
+.priority-label.medium {
+  background-color: #f59e0b;
+}
+
+.priority-label.high {
+  background-color: #ef4444;
+}
+
 /* BUTTONS */
 
 .button-container {
@@ -346,31 +223,6 @@ main {
 .completed {
   opacity: 0.6;
   text-decoration: line-through;
-}
-
-/* PRIORITY COLORS */
-
-.low {
-  border-left: 8px solid #10b981;
-}
-
-.medium {
-  border-left: 8px solid #f59e0b;
-}
-
-.high {
-  border-left: 8px solid #ef4444;
-}
-
-/* PRIORITY DROPDOWN */
-
-#prioritySelect {
-  padding: 0.9rem;
-  border-radius: 1rem;
-  border: 1px solid #3a3a54;
-  background: #2a2a3c;
-  color: white;
-  font-size: 1rem;
 }
 
 /* FOOTER */

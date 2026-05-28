@@ -3,10 +3,10 @@ const taskInput = document.getElementById("taskInput");
 const prioritySelect = document.getElementById("prioritySelect");
 const taskList = document.getElementById("taskList");
 
-// Load tasks
+// LOAD TASKS
 loadTasks();
 
-// Add task
+// ADD TASK
 addTaskBtn.addEventListener("click", function () {
 
     const taskText = taskInput.value;
@@ -36,18 +36,50 @@ function createTask(taskText, completedStatus, priority) {
 
     li.classList.add("task-item");
 
-    li.classList.add(priority);
-
     if (completedStatus) {
 
         li.classList.add("completed");
 
     }
 
+    // LEFT SIDE CONTAINER
+    const leftContainer = document.createElement("div");
+
+    leftContainer.classList.add("task-left");
+
     // TASK TEXT
     const span = document.createElement("span");
 
-    span.textContent = `${taskText} (${priority})`;
+    span.textContent = taskText;
+
+    // PRIORITY LABEL
+    const priorityLabel = document.createElement("span");
+
+    priorityLabel.classList.add("priority-label");
+
+    priorityLabel.classList.add(priority);
+
+    if (priority === "low") {
+
+        priorityLabel.textContent = "LOW";
+
+    }
+
+    if (priority === "medium") {
+
+        priorityLabel.textContent = "MED";
+
+    }
+
+    if (priority === "high") {
+
+        priorityLabel.textContent = "HIGH";
+
+    }
+
+    leftContainer.appendChild(span);
+
+    leftContainer.appendChild(priorityLabel);
 
     // COMPLETE BUTTON
     const completeBtn = document.createElement("button");
@@ -89,7 +121,7 @@ function createTask(taskText, completedStatus, priority) {
     buttonContainer.appendChild(deleteBtn);
 
     // APPEND
-    li.appendChild(span);
+    li.appendChild(leftContainer);
 
     li.appendChild(buttonContainer);
 
@@ -106,19 +138,21 @@ function saveTasks() {
 
     allTasks.forEach(function (task) {
 
-        const text = task.querySelector("span").textContent;
+        const taskText = task.querySelector(".task-left span").textContent;
 
         const completed = task.classList.contains("completed");
 
         let priority = "low";
 
-        if (task.classList.contains("medium")) {
+        const priorityLabel = task.querySelector(".priority-label");
+
+        if (priorityLabel.classList.contains("medium")) {
 
             priority = "medium";
 
         }
 
-        if (task.classList.contains("high")) {
+        if (priorityLabel.classList.contains("high")) {
 
             priority = "high";
 
@@ -126,7 +160,7 @@ function saveTasks() {
 
         tasks.push({
 
-            text: text,
+            text: taskText,
             completed: completed,
             priority: priority
 
