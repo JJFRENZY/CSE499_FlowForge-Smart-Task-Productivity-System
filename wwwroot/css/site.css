@@ -33,6 +33,8 @@ main {
   margin: 0 auto;
 }
 
+/* HEADER */
+
 .main-header {
   background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
   padding: 1rem;
@@ -58,7 +60,8 @@ main {
   color: #e2e8ff;
 }
 
-/* landing container */
+/* LANDING CONTAINER */
+
 .landing-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -72,7 +75,8 @@ main {
   justify-content: center;
 }
 
-/* left side – value proposition */
+/* HERO SECTION */
+
 .hero {
   flex: 1.2;
   min-width: 260px;
@@ -94,6 +98,8 @@ main {
   margin-bottom: 2rem;
   max-width: 90%;
 }
+
+/* FEATURE LIST */
 
 .feature-list {
   list-style: none;
@@ -122,7 +128,8 @@ main {
   flex-shrink: 0;
 }
 
-/* right side – registration card (prominent) */
+/* SIGNUP CARD */
+
 .signup-card {
   flex: 0.9;
   min-width: 300px;
@@ -214,6 +221,159 @@ main {
   margin-top: 1rem;
   color: #6b7280;
 }
+
+/* TASK CONTAINER */
+
+.task-container {
+  width: 100%;
+  background: rgba(30, 30, 47, 0.75);
+  padding: 2rem;
+  border-radius: 1.5rem;
+  border: 1px solid rgba(124, 58, 237, 0.25);
+  box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(6px);
+}
+
+.task-container h2 {
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+/* TASK FORM */
+
+.task-form {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.task-form input {
+  flex: 1;
+  padding: 0.9rem 1rem;
+  border-radius: 1rem;
+  border: 1px solid #3a3a54;
+  background: #2a2a3c;
+  color: #fff;
+  outline: none;
+  transition: 0.2s;
+}
+
+.task-form input:focus {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25);
+}
+
+.task-form button {
+  background: linear-gradient(95deg, #7c3aed, #6d28d9);
+  color: #fff;
+  border: none;
+  padding: 0.9rem 1.2rem;
+  border-radius: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.task-form button:hover {
+  transform: scale(0.97);
+  background: linear-gradient(95deg, #8b5cf6, #7c3aed);
+}
+
+/* TASK LIST */
+
+#taskList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.task-item {
+  background: #2a2a3c;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 1rem;
+  border: 1px solid #3a3a54;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  transition: 0.2s;
+}
+
+.task-item:hover {
+  border-color: #7c3aed;
+  background: #2f2f44;
+}
+
+/* BUTTONS */
+
+.button-container {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.complete-btn {
+  background: transparent;
+  border: 1px solid #50c878;
+  color: #50c878;
+  padding: 0.3rem 0.7rem;
+  border-radius: 0.7rem;
+  cursor: pointer;
+}
+
+.complete-btn:hover {
+  background: #50c878;
+  color: white;
+}
+
+.delete-btn {
+  background: transparent;
+  border: 1px solid #ef4444;
+  color: #f87171;
+  padding: 0.3rem 0.7rem;
+  border-radius: 0.7rem;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  background: #ef4444;
+  color: white;
+}
+
+/* COMPLETED TASK */
+
+.completed {
+  opacity: 0.6;
+  text-decoration: line-through;
+}
+
+/* PRIORITY COLORS */
+
+.low {
+  border-left: 8px solid #10b981;
+}
+
+.medium {
+  border-left: 8px solid #f59e0b;
+}
+
+.high {
+  border-left: 8px solid #ef4444;
+}
+
+/* PRIORITY DROPDOWN */
+
+#prioritySelect {
+  padding: 0.9rem;
+  border-radius: 1rem;
+  border: 1px solid #3a3a54;
+  background: #2a2a3c;
+  color: white;
+  font-size: 1rem;
+}
+
+/* FOOTER */
 
 .footer-note {
   text-align: center;

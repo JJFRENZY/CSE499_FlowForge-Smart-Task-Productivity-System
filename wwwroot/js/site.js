@@ -1,21 +1,27 @@
 ﻿const addTaskBtn = document.getElementById("addTaskBtn");
 const taskInput = document.getElementById("taskInput");
+const prioritySelect = document.getElementById("prioritySelect");
 const taskList = document.getElementById("taskList");
 
-// Load tasks when page starts
+// Load tasks
 loadTasks();
 
-// Add task button
+// Add task
 addTaskBtn.addEventListener("click", function () {
 
     const taskText = taskInput.value;
 
+    const priority = prioritySelect.value;
+
     if (taskText === "") {
+
         alert("Please enter a task.");
+
         return;
+
     }
 
-    createTask(taskText, false);
+    createTask(taskText, false, priority);
 
     saveTasks();
 
@@ -23,22 +29,25 @@ addTaskBtn.addEventListener("click", function () {
 
 });
 
-// CREATE TASK FUNCTION
-function createTask(taskText, completedStatus) {
+// CREATE TASK
+function createTask(taskText, completedStatus, priority) {
 
-    // Create task item
     const li = document.createElement("li");
 
     li.classList.add("task-item");
 
+    li.classList.add(priority);
+
     if (completedStatus) {
+
         li.classList.add("completed");
+
     }
 
-    // Task text
+    // TASK TEXT
     const span = document.createElement("span");
 
-    span.textContent = taskText;
+    span.textContent = `${taskText} (${priority})`;
 
     // COMPLETE BUTTON
     const completeBtn = document.createElement("button");
@@ -70,7 +79,7 @@ function createTask(taskText, completedStatus) {
 
     });
 
-    // Button container
+    // BUTTON CONTAINER
     const buttonContainer = document.createElement("div");
 
     buttonContainer.classList.add("button-container");
@@ -79,7 +88,7 @@ function createTask(taskText, completedStatus) {
 
     buttonContainer.appendChild(deleteBtn);
 
-    // Add elements
+    // APPEND
     li.appendChild(span);
 
     li.appendChild(buttonContainer);
@@ -97,13 +106,30 @@ function saveTasks() {
 
     allTasks.forEach(function (task) {
 
-        const taskText = task.querySelector("span").textContent;
+        const text = task.querySelector("span").textContent;
 
         const completed = task.classList.contains("completed");
 
+        let priority = "low";
+
+        if (task.classList.contains("medium")) {
+
+            priority = "medium";
+
+        }
+
+        if (task.classList.contains("high")) {
+
+            priority = "high";
+
+        }
+
         tasks.push({
-            text: taskText,
-            completed: completed
+
+            text: text,
+            completed: completed,
+            priority: priority
+
         });
 
     });
@@ -118,14 +144,16 @@ function loadTasks() {
     const storedTasks = localStorage.getItem("tasks");
 
     if (storedTasks === null) {
+
         return;
+
     }
 
     const tasks = JSON.parse(storedTasks);
 
     tasks.forEach(function (task) {
 
-        createTask(task.text, task.completed);
+        createTask(task.text, task.completed, task.priority);
 
     });
 
