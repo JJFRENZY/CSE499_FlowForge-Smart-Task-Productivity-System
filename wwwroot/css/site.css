@@ -204,6 +204,17 @@ main {
   padding: 0.25rem 0.6rem;
   border-radius: 999px;
   font-size: 0.75rem;
+  font-weight: bold;
+  transition: 0.2s;
+}
+
+/* OVERDUE */
+
+.overdue {
+  background: red !important;
+  color: white !important;
+  border: 3px solid yellow !important;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
 }
 
 /* BUTTONS */
