@@ -1,212 +1,159 @@
-@page
-@attribute [Authorize]
-@using Microsoft.AspNetCore.Authorization
-@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
-@{
-    var requestToken = Antiforgery.GetAndStoreTokens(HttpContext).RequestToken;
-}
-<meta name="csrf-token" content="@requestToken" />
+using CSE499_FlowForge_Smart_Task_Productivity_System.Data;
+using CSE499_FlowForge_Smart_Task_Productivity_System.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
-@model TrackerModel
+namespace CSE499_FlowForge_Smart_Task_Productivity_System.Pages;
 
-@{
-    ViewData["Title"] = "Task Dashboard";
-}
+[Authorize]
+public class TrackerModel : PageModel
+{
+    private readonly ApplicationDbContext _context;
 
-<link rel="stylesheet" href="~/css/tracker.css" />
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    public TrackerModel(ApplicationDbContext context)
+    {
+        _context = context;
+    }
 
-<header>
-    <div>
-        <h1>📊 Task Dashboard</h1>
-        <p>Your personal task hub</p>
-    </div>
-    <form asp-area="Identity" asp-page="/Account/Logout" method="post">
-        <button type="submit">🚪 Logout</button>
-    </form>
-</header>
+    public List<TaskItem> Tasks { get; set; } = new();
 
-<main>
-    <div class="task-container">
-        <!-- ========= TASK MANAGER ========= -->
-        <h2>✏️ Manage Tasks</h2>
-        <div class="task-form">
-            <input type="text" id="taskInput" placeholder="Write a new task..." />
-            <button id="addTaskBtn">➕ Add Task</button>
-        </div>
+    public int TotalTasks { get; set; }
+    public int CompletedTasks { get; set; }
+    public int PendingTasks { get; set; }
+    public int OverdueTasks { get; set; }
+    public double CompletionRate { get; set; }
 
-        <ul id="taskList">
-            @foreach (var task in Model.Tasks)
+    public async Task OnGetAsync()
+    {
+        await LoadTasksAsync();
+    }
+
+    public async Task<IActionResult> OnPostAddTaskAsync([FromBody] AddTaskRequest request)
+    {
+        string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (string.IsNullOrWhiteSpace(request.Title))
+        {
+            return BadRequest();
+        }
+
+        var task = new TaskItem
+        {
+            Title = request.Title,
+            IsCompleted = false,
+            Priority = string.IsNullOrWhiteSpace(request.Priority) ? "low" : request.Priority,
+            DueDate = request.DueDate,
+            UserId = userId
+        };
+
+        _context.Tasks.Add(task);
+        await _context.SaveChangesAsync();
+
+        return await GetUpdatedDataAsync();
+    }
+
+    public async Task<IActionResult> OnPostToggleTaskAsync([FromBody] TaskRequest request)
+    {
+        string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var task = await _context.Tasks
+            .FirstOrDefaultAsync(t => t.Id == request.TaskId && t.UserId == userId);
+
+        if (task == null)
+        {
+            return NotFound();
+        }
+
+        task.IsCompleted = !task.IsCompleted;
+        await _context.SaveChangesAsync();
+
+        return await GetUpdatedDataAsync();
+    }
+
+    public async Task<IActionResult> OnPostDeleteTaskAsync([FromBody] TaskRequest request)
+    {
+        string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var task = await _context.Tasks
+            .FirstOrDefaultAsync(t => t.Id == request.TaskId && t.UserId == userId);
+
+        if (task == null)
+        {
+            return NotFound();
+        }
+
+        _context.Tasks.Remove(task);
+        await _context.SaveChangesAsync();
+
+        return await GetUpdatedDataAsync();
+    }
+
+    private async Task LoadTasksAsync()
+    {
+        string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        Tasks = await _context.Tasks
+            .Where(t => t.UserId == userId)
+            .OrderBy(t => t.IsCompleted)
+            .ThenBy(t => t.DueDate)
+            .ToListAsync();
+
+        DateTime today = DateTime.Today;
+
+        TotalTasks = Tasks.Count;
+        CompletedTasks = Tasks.Count(t => t.IsCompleted);
+        PendingTasks = TotalTasks - CompletedTasks;
+        OverdueTasks = Tasks.Count(t =>
+            !t.IsCompleted &&
+            t.DueDate.HasValue &&
+            t.DueDate.Value.Date < today
+        );
+
+        CompletionRate = TotalTasks == 0 ? 0 : (double)CompletedTasks / TotalTasks * 100;
+    }
+
+    private async Task<JsonResult> GetUpdatedDataAsync()
+    {
+        await LoadTasksAsync();
+
+        DateTime today = DateTime.Today;
+
+        return new JsonResult(new
+        {
+            tasks = Tasks.Select(t => new
             {
-                <li data-id="@task.Id" class="@(task.IsCompleted ? "completed" : "")">
-                    <span>@task.Title</span>
-                    <div class="button-container">
-                        <button class="complete-btn">✔️</button>
-                        <button class="delete-btn">🗑️</button>
-                    </div>
-                </li>
+                id = t.Id,
+                title = t.Title,
+                isCompleted = t.IsCompleted,
+                priority = t.Priority,
+                dueDate = t.DueDate?.ToString("yyyy-MM-dd"),
+                isOverdue = !t.IsCompleted &&
+                            t.DueDate.HasValue &&
+                            t.DueDate.Value.Date < today
+            }),
+            stats = new
+            {
+                total = TotalTasks,
+                completed = CompletedTasks,
+                pending = PendingTasks,
+                overdue = OverdueTasks,
+                completionRate = CompletionRate
             }
-        </ul>
-        <hr class="divider" />
-
-        <div class="chart-flex">
-
-            <div class="dashboard-grid">
-                <div class="stat-card">
-                    <h3>📋 Total Tasks:</h3>
-                    <p id="totalTasks">@Model.TotalTasks</p>
-                </div>
-                <div class="stat-card">
-                    <h3>✅ Completed:</h3>
-                    <p id="completedTasks">@Model.CompletedTasks</p>
-                </div>
-                <div class="stat-card">
-                    <h3>⏳ Pending:</h3>
-                    <p id="pendingTasks">@Model.PendingTasks</p>
-                </div>
-                <div class="stat-card">
-                    <h3>📈 Completion Rate:</h3>
-                    <p id="completionRate">@Model.CompletionRate.ToString("F1")%</p>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: @Model.CompletionRate%"></div>
-                    </div>
-                </div>
-
-            </div>
-            <div class="chart-wrapper">
-                <canvas id="statusChart" width="100" height="100"></canvas>
-            </div>
-
-        </div>
-
-    </div>
-</main>
-
-<script>
-    // Anti-forgery token for AJAX POSTs
-    const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
-
-    
-    function getCsrfToken() {
-    return document.querySelector('meta[name="csrf-token"]')?.content || "";
+        });
     }
 
-    let chart;
-
-    // Helper to update UI (task list + dashboard stats + chart)
-    function refreshUI(data) {
-    // update task list
-    const taskList = document.getElementById('taskList');
-    taskList.innerHTML = '';
-    data.tasks.forEach(task => {
-    const li = document.createElement('li');
-    li.dataset.id = task.id;
-    if (task.isCompleted) li.classList.add('completed');
-    li.innerHTML = `
-    <span>${escapeHtml(task.title)}</span>
-    <div class="button-container">
-    <button class="complete-btn">✔️</button>
-    <button class="delete-btn">🗑️</button>
-    </div>
-    `;
-    taskList.appendChild(li);
-    });
-
-    // update stats cards
-    document.getElementById('totalTasks').innerText = data.stats.total;
-    document.getElementById('completedTasks').innerText = data.stats.completed;
-    document.getElementById('pendingTasks').innerText = data.stats.pending;
-    const rate = data.stats.completionRate.toFixed(1);
-    document.getElementById('completionRate').innerHTML = `${rate}%`;
-    document.querySelector('.progress-fill').style.width = `${data.stats.completionRate}%`;
-
-    // update pie chart
-    if (chart) chart.destroy();
-    const ctx = document.getElementById('statusChart').getContext('2d');
-    chart = new Chart(ctx, {
-    type: 'pie',
-    data: {
-    labels: ['Completed', 'Pending'],
-    datasets: [{
-    data: [data.stats.completed, data.stats.pending],
-    backgroundColor: ['#50c878', '#ef4444'],
-    borderWidth: 0
-    }]
-    },
-    options: {
-    responsive: true,
-    plugins: { legend: { position: 'bottom', labels: { color: '#e5e7eb' } } }
-    }
-    });
+    public class AddTaskRequest
+    {
+        public string Title { get; set; } = string.Empty;
+        public string Priority { get; set; } = "low";
+        public DateTime? DueDate { get; set; }
     }
 
-    function escapeHtml(str) {
-    return str.replace(/[&<>]/g, function (m) {
-    if (m === '&') return '&amp;';
-    if (m === '<') return '&lt;';
-    if (m === '>') return '&gt;';
-    return m;
-    });
+    public class TaskRequest
+    {
+        public int TaskId { get; set; }
     }
-
-    // API calls
-    async function callHandler(handler, payload) {
-    const res = await fetch(`?handler=${handler}`, {
-    method: 'POST',
-    headers: {
-    'Content-Type': 'application/json',
-    'RequestVerificationToken': getCsrfToken()
-    },
-    body: JSON.stringify(payload)
-    });
-    if (res.ok) {
-    const data = await res.json();
-    refreshUI(data);
-    } else {
-    alert('Something went wrong');
-    }
-    }
-
-    // Event listeners
-    document.getElementById('addTaskBtn').addEventListener('click', () => {
-    const input = document.getElementById('taskInput');
-    const title = input.value.trim();
-    if (!title) return;
-    callHandler('AddTask', { title });
-    input.value = '';
-    });
-
-    document.getElementById('taskList').addEventListener('click', (e) => {
-    const btn = e.target;
-    const li = btn.closest('li');
-    if (!li) return;
-    const taskId = parseInt(li.dataset.id);
-    if (btn.classList.contains('delete-btn')) {
-    callHandler('DeleteTask', { taskId });
-    } else if (btn.classList.contains('complete-btn')) {
-    callHandler('ToggleTask', { taskId });
-    }
-    });
-
-    // initial chart render
-    window.addEventListener('load', () => {
-    const ctx = document.getElementById('statusChart').getContext('2d');
-    const completed = parseInt(document.getElementById('completedTasks').innerText);
-    const pending = parseInt(document.getElementById('pendingTasks').innerText);
-    chart = new Chart(ctx, {
-    type: 'pie',
-    data: {
-    labels: ['Completed', 'Pending'],
-    datasets: [{
-    data: [completed, pending],
-    backgroundColor: ['#50c878', '#ef4444'],
-    borderWidth: 0
-    }]
-    },
-    options: {
-    responsive: true,
-    plugins: { legend: { position: 'bottom', labels: { color: '#e5e7eb' } } }
-    }
-    });
-    });
-</script>
+}

@@ -1,13 +1,21 @@
-using System;
+using System.ComponentModel.DataAnnotations;
 
-namespace CSE499_FlowForge_Smart_Task_Productivity_System.Models
+namespace CSE499_FlowForge_Smart_Task_Productivity_System.Models;
+
+public class TaskItem
 {
-    public class TaskItem
-    {
-        public int Id { get; set; }
-        public string Title { get; set; } = string.Empty;
-        public bool IsCompleted { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public string UserId { get; set; } = string.Empty;
-    }
+    public int Id { get; set; }
+
+    [Required]
+    public string Title { get; set; } = string.Empty;
+
+    public bool IsCompleted { get; set; }
+
+    public string Priority { get; set; } = "low";
+
+    public DateTime? DueDate { get; set; }
+
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+    public string? UserId { get; set; }
 }
