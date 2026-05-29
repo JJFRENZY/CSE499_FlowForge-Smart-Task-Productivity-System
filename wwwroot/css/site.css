@@ -33,8 +33,6 @@ main {
   margin: 0 auto;
 }
 
-/* HEADER */
-
 .main-header {
   background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
   padding: 1rem;
@@ -60,8 +58,6 @@ main {
   color: #e2e8ff;
 }
 
-/* TASK CONTAINER */
-
 .task-container {
   width: 100%;
   background: rgba(30, 30, 47, 0.75);
@@ -76,8 +72,6 @@ main {
   margin-bottom: 1rem;
   color: #fff;
 }
-
-/* TASK FORM */
 
 .task-form {
   display: flex;
@@ -123,8 +117,6 @@ main {
   background: linear-gradient(95deg, #8b5cf6, #7c3aed);
 }
 
-/* TASK LIST */
-
 #taskList {
   list-style: none;
   padding: 0;
@@ -137,11 +129,9 @@ main {
   margin-bottom: 1rem;
   border-radius: 1rem;
   border: 1px solid #3a3a54;
-
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   transition: 0.2s;
 }
 
@@ -149,8 +139,6 @@ main {
   border-color: #7c3aed;
   background: #2f2f44;
 }
-
-/* LEFT SIDE */
 
 .task-left {
   display: flex;
@@ -174,8 +162,6 @@ main {
   align-items: center;
 }
 
-/* PRIORITY LABEL */
-
 .priority-label {
   padding: 0.25rem 0.6rem;
   border-radius: 999px;
@@ -196,8 +182,6 @@ main {
   background-color: #ef4444;
 }
 
-/* DUE DATE */
-
 .due-date {
   background: #374151;
   color: #d1d5db;
@@ -208,8 +192,6 @@ main {
   transition: 0.2s;
 }
 
-/* OVERDUE */
-
 .overdue {
   background: red !important;
   color: white !important;
@@ -217,20 +199,23 @@ main {
   box-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
 }
 
-/* BUTTONS */
-
 .button-container {
   display: flex;
   gap: 0.5rem;
 }
 
-.complete-btn {
+.complete-btn,
+.edit-btn,
+.delete-btn {
   background: transparent;
-  border: 1px solid #50c878;
-  color: #50c878;
   padding: 0.3rem 0.7rem;
   border-radius: 0.7rem;
   cursor: pointer;
+}
+
+.complete-btn {
+  border: 1px solid #50c878;
+  color: #50c878;
 }
 
 .complete-btn:hover {
@@ -239,12 +224,8 @@ main {
 }
 
 .edit-btn {
-  background: transparent;
   border: 1px solid #60a5fa;
   color: #93c5fd;
-  padding: 0.3rem 0.7rem;
-  border-radius: 0.7rem;
-  cursor: pointer;
 }
 
 .edit-btn:hover {
@@ -253,12 +234,8 @@ main {
 }
 
 .delete-btn {
-  background: transparent;
   border: 1px solid #ef4444;
   color: #f87171;
-  padding: 0.3rem 0.7rem;
-  border-radius: 0.7rem;
-  cursor: pointer;
 }
 
 .delete-btn:hover {
@@ -266,14 +243,10 @@ main {
   color: white;
 }
 
-/* COMPLETED TASK */
-
 .completed {
   opacity: 0.6;
   text-decoration: line-through;
 }
-
-/* FOOTER */
 
 .footer-note {
   text-align: center;
@@ -284,8 +257,6 @@ main {
   margin-top: 2rem;
 }
 
-/* EDIT MODAL */
-
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -293,11 +264,9 @@ main {
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.65);
-
   display: flex;
   justify-content: center;
   align-items: center;
-
   z-index: 999;
 }
 

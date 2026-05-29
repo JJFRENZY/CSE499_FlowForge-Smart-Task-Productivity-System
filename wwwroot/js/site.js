@@ -73,16 +73,15 @@ function createTask(taskText, completedStatus, priority, dueDate) {
     const taskInfo = document.createElement("div");
     taskInfo.classList.add("task-info");
 
-    const span = document.createElement("span");
-    span.classList.add("task-text");
-    span.textContent = taskText;
+    const taskTextElement = document.createElement("span");
+    taskTextElement.classList.add("task-text");
+    taskTextElement.textContent = taskText;
 
     const metaContainer = document.createElement("div");
     metaContainer.classList.add("meta-container");
 
     const priorityLabel = document.createElement("span");
-    priorityLabel.classList.add("priority-label");
-    priorityLabel.classList.add(priority);
+    priorityLabel.classList.add("priority-label", priority);
     priorityLabel.textContent = getPriorityText(priority);
 
     metaContainer.appendChild(priorityLabel);
@@ -90,16 +89,16 @@ function createTask(taskText, completedStatus, priority, dueDate) {
     if (dueDate !== "") {
         const dueDateLabel = document.createElement("span");
         dueDateLabel.classList.add("due-date");
+        dueDateLabel.textContent = `Due: ${dueDate}`;
 
         if (isOverdue(dueDate) && !completedStatus) {
             dueDateLabel.classList.add("overdue");
         }
 
-        dueDateLabel.textContent = `Due: ${dueDate}`;
         metaContainer.appendChild(dueDateLabel);
     }
 
-    taskInfo.appendChild(span);
+    taskInfo.appendChild(taskTextElement);
     taskInfo.appendChild(metaContainer);
     leftContainer.appendChild(taskInfo);
 
@@ -183,7 +182,7 @@ saveEditBtn.addEventListener("click", function () {
         return;
     }
 
-    const wasCompleted = taskBeingEdited.classList.contains("completed");
+    const isCompleted = taskBeingEdited.classList.contains("completed");
 
     taskBeingEdited.querySelector(".task-text").textContent = newText;
 
@@ -204,7 +203,7 @@ saveEditBtn.addEventListener("click", function () {
         newDueDateLabel.classList.add("due-date");
         newDueDateLabel.textContent = `Due: ${newDueDate}`;
 
-        if (isOverdue(newDueDate) && !wasCompleted) {
+        if (isOverdue(newDueDate) && !isCompleted) {
             newDueDateLabel.classList.add("overdue");
         }
 
