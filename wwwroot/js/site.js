@@ -68,29 +68,24 @@ function createTask(taskText, completedStatus, priority, dueDate) {
 
     }
 
-    // LEFT SIDE
     const leftContainer = document.createElement("div");
 
     leftContainer.classList.add("task-left");
 
-    // TASK INFO
     const taskInfo = document.createElement("div");
 
     taskInfo.classList.add("task-info");
 
-    // TASK TEXT
     const span = document.createElement("span");
 
     span.classList.add("task-text");
 
     span.textContent = taskText;
 
-    // META CONTAINER
     const metaContainer = document.createElement("div");
 
     metaContainer.classList.add("meta-container");
 
-    // PRIORITY LABEL
     const priorityLabel = document.createElement("span");
 
     priorityLabel.classList.add("priority-label");
@@ -117,7 +112,6 @@ function createTask(taskText, completedStatus, priority, dueDate) {
 
     metaContainer.appendChild(priorityLabel);
 
-    // DUE DATE LABEL
     if (dueDate !== "") {
 
         const dueDateLabel = document.createElement("span");
@@ -142,7 +136,6 @@ function createTask(taskText, completedStatus, priority, dueDate) {
 
     leftContainer.appendChild(taskInfo);
 
-    // COMPLETE BUTTON
     const completeBtn = document.createElement("button");
 
     completeBtn.textContent = "Complete";
@@ -173,7 +166,40 @@ function createTask(taskText, completedStatus, priority, dueDate) {
 
     });
 
-    // DELETE BUTTON
+    const editBtn = document.createElement("button");
+
+    editBtn.textContent = "Edit";
+
+    editBtn.classList.add("edit-btn");
+
+    editBtn.addEventListener("click", function () {
+
+        const currentText = span.textContent;
+
+        const newText = prompt("Edit task:", currentText);
+
+        if (newText === null) {
+
+            return;
+
+        }
+
+        const trimmedText = newText.trim();
+
+        if (trimmedText === "") {
+
+            alert("Task name cannot be empty.");
+
+            return;
+
+        }
+
+        span.textContent = trimmedText;
+
+        saveTasks();
+
+    });
+
     const deleteBtn = document.createElement("button");
 
     deleteBtn.textContent = "Delete";
@@ -188,16 +214,16 @@ function createTask(taskText, completedStatus, priority, dueDate) {
 
     });
 
-    // BUTTON CONTAINER
     const buttonContainer = document.createElement("div");
 
     buttonContainer.classList.add("button-container");
 
     buttonContainer.appendChild(completeBtn);
 
+    buttonContainer.appendChild(editBtn);
+
     buttonContainer.appendChild(deleteBtn);
 
-    // APPEND
     li.appendChild(leftContainer);
 
     li.appendChild(buttonContainer);
