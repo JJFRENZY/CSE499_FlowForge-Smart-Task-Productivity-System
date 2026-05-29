@@ -55,3 +55,67 @@
     </section>
 
 </main>
+
+<!-- EDIT MODAL -->
+
+<div id="editModal" class="modal-overlay hidden">
+
+    <div class="modal-card">
+
+        <h2>Edit Task</h2>
+
+        <label for="editTaskInput">
+            Task Name
+        </label>
+
+        <input
+            type="text"
+            id="editTaskInput"
+        >
+
+        <label for="editPrioritySelect">
+            Priority
+        </label>
+
+        <select id="editPrioritySelect">
+
+            <option value="low">
+                Low Priority
+            </option>
+
+            <option value="medium">
+                Medium Priority
+            </option>
+
+            <option value="high">
+                High Priority
+            </option>
+
+        </select>
+
+        <label for="editDueDateInput">
+            Due Date
+        </label>
+
+        <input
+            type="date"
+            id="editDueDateInput"
+        >
+
+        <div class="modal-buttons">
+
+            <button id="saveEditBtn">
+                Save Changes
+            </button>
+
+            <button id="cancelEditBtn">
+                Cancel
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="~/js/site.js"></script>
