@@ -1,10 +1,10 @@
+using System.Security.Claims;
 using CSE499_FlowForge_Smart_Task_Productivity_System.Data;
 using CSE499_FlowForge_Smart_Task_Productivity_System.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 
 namespace CSE499_FlowForge_Smart_Task_Productivity_System.Pages;
 
@@ -59,8 +59,9 @@ public class TrackerModel : PageModel
     {
         string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        var task = await _context.Tasks
-            .FirstOrDefaultAsync(t => t.Id == request.TaskId && t.UserId == userId);
+        var task = await _context.Tasks.FirstOrDefaultAsync(t =>
+            t.Id == request.TaskId && t.UserId == userId
+        );
 
         if (task == null)
         {
@@ -77,8 +78,9 @@ public class TrackerModel : PageModel
     {
         string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        var task = await _context.Tasks
-            .FirstOrDefaultAsync(t => t.Id == request.TaskId && t.UserId == userId);
+        var task = await _context.Tasks.FirstOrDefaultAsync(t =>
+            t.Id == request.TaskId && t.UserId == userId
+        );
 
         if (task == null)
         {
@@ -91,12 +93,55 @@ public class TrackerModel : PageModel
         return await GetUpdatedDataAsync();
     }
 
+    public async Task<IActionResult> OnPostGetWeeklyTasksAsync([FromBody] WeeklyRequest request)
+    {
+        string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var startOfWeek = request.WeekStart.Date;
+        var endOfWeek = startOfWeek.AddDays(6);
+
+        var tasksInWeek = await _context
+            .Tasks.Where(t =>
+                t.UserId == userId && t.DueDate >= startOfWeek && t.DueDate <= endOfWeek
+            )
+            .OrderBy(t => t.DueDate)
+            .ThenBy(t => t.Priority)
+            .ToListAsync();
+
+        var grouped = tasksInWeek
+            .GroupBy(t => t.DueDate?.Date ?? DateTime.MinValue)
+            .ToDictionary(
+                g => g.Key,
+                g =>
+                    g.Select(t => new
+                    {
+                        t.Id,
+                        t.Title,
+                        t.Priority,
+                        t.IsCompleted
+                    })
+            );
+
+        var overloadedDays = grouped
+            .Where(g => g.Value.Count() > 3)
+            .Select(g => g.Key.ToString("yyyy-MM-dd"));
+
+        return new JsonResult(
+            new
+            {
+                weekStart = startOfWeek.ToString("yyyy-MM-dd"),
+                weekEnd = endOfWeek.ToString("yyyy-MM-dd"),
+                days = grouped,
+                overloadedDays = overloadedDays
+            }
+        );
+    }
+
     private async Task LoadTasksAsync()
     {
         string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        Tasks = await _context.Tasks
-            .Where(t => t.UserId == userId)
+        Tasks = await _context
+            .Tasks.Where(t => t.UserId == userId)
             .OrderBy(t => t.IsCompleted)
             .ThenBy(t => t.DueDate)
             .ToListAsync();
@@ -107,9 +152,7 @@ public class TrackerModel : PageModel
         CompletedTasks = Tasks.Count(t => t.IsCompleted);
         PendingTasks = TotalTasks - CompletedTasks;
         OverdueTasks = Tasks.Count(t =>
-            !t.IsCompleted &&
-            t.DueDate.HasValue &&
-            t.DueDate.Value.Date < today
+            !t.IsCompleted && t.DueDate.HasValue && t.DueDate.Value.Date < today
         );
 
         CompletionRate = TotalTasks == 0 ? 0 : (double)CompletedTasks / TotalTasks * 100;
@@ -121,28 +164,28 @@ public class TrackerModel : PageModel
 
         DateTime today = DateTime.Today;
 
-        return new JsonResult(new
-        {
-            tasks = Tasks.Select(t => new
+        return new JsonResult(
+            new
             {
-                id = t.Id,
-                title = t.Title,
-                isCompleted = t.IsCompleted,
-                priority = t.Priority,
-                dueDate = t.DueDate?.ToString("yyyy-MM-dd"),
-                isOverdue = !t.IsCompleted &&
-                            t.DueDate.HasValue &&
-                            t.DueDate.Value.Date < today
-            }),
-            stats = new
-            {
-                total = TotalTasks,
-                completed = CompletedTasks,
-                pending = PendingTasks,
-                overdue = OverdueTasks,
-                completionRate = CompletionRate
+                tasks = Tasks.Select(t => new
+                {
+                    id = t.Id,
+                    title = t.Title,
+                    isCompleted = t.IsCompleted,
+                    priority = t.Priority,
+                    dueDate = t.DueDate?.ToString("yyyy-MM-dd"),
+                    isOverdue = !t.IsCompleted && t.DueDate.HasValue && t.DueDate.Value.Date < today
+                }),
+                stats = new
+                {
+                    total = TotalTasks,
+                    completed = CompletedTasks,
+                    pending = PendingTasks,
+                    overdue = OverdueTasks,
+                    completionRate = CompletionRate
+                }
             }
-        });
+        );
     }
 
     public class AddTaskRequest
@@ -155,5 +198,10 @@ public class TrackerModel : PageModel
     public class TaskRequest
     {
         public int TaskId { get; set; }
+    }
+
+    public class WeeklyRequest
+    {
+        public DateTime WeekStart { get; set; }
     }
 }

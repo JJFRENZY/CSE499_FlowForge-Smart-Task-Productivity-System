@@ -14,6 +14,7 @@
 }
 
 <link rel="stylesheet" href="~/css/tracker.css" />
+<script src="~/scripts/weekPicker.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
 <header>
@@ -79,6 +80,12 @@
 
         <hr class="divider" />
 
+        <div class="weekly-section">
+            <h3>📅 Weekly Task Tracker</h3>
+            <input type="week" id="weekPicker" />
+            <div id="weeklyGrid" class="weekly-grid"></div>
+        </div>
+
         <div class="chart-flex">
             <div class="dashboard-grid">
                 <div class="stat-card">
@@ -115,194 +122,194 @@
 
 <script>
     function getCsrfToken() {
-        return document.querySelector('meta[name="csrf-token"]')?.content || "";
+    return document.querySelector('meta[name="csrf-token"]')?.content || "";
     }
 
     let chart;
 
     function getPriorityText(priority) {
-        if (priority === "high") {
-            return "HIGH";
-        }
+    if (priority === "high") {
+    return "HIGH";
+    }
 
-        if (priority === "medium") {
-            return "MED";
-        }
+    if (priority === "medium") {
+    return "MED";
+    }
 
-        return "LOW";
+    return "LOW";
     }
 
     function refreshUI(data) {
-        const taskList = document.getElementById('taskList');
-        taskList.innerHTML = '';
+    const taskList = document.getElementById('taskList');
+    taskList.innerHTML = '';
 
-        data.tasks.forEach(task => {
-            const li = document.createElement('li');
+    data.tasks.forEach(task => {
+    const li = document.createElement('li');
 
-            li.dataset.id = task.id;
+    li.dataset.id = task.id;
 
-            if (task.isCompleted) {
-                li.classList.add('completed');
-            }
+    if (task.isCompleted) {
+    li.classList.add('completed');
+    }
 
-            const dueDateHtml = task.dueDate
-                ? `<span class="due-date ${task.isOverdue ? 'overdue' : ''}">Due: ${task.dueDate}</span>`
-                : "";
+    const dueDateHtml = task.dueDate
+    ? `<span class="due-date ${task.isOverdue ? 'overdue' : ''}">Due: ${task.dueDate}</span>`
+    : "";
 
-            li.innerHTML = `
-                <div class="task-info">
-                    <span>${escapeHtml(task.title)}</span>
+    li.innerHTML = `
+    <div class="task-info">
+    <span>${escapeHtml(task.title)}</span>
 
-                    <div class="task-meta">
-                        <span class="priority-badge priority-${task.priority}">
-                            ${getPriorityText(task.priority)}
-                        </span>
+    <div class="task-meta">
+    <span class="priority-badge priority-${task.priority}">
+    ${getPriorityText(task.priority)}
+    </span>
 
-                        ${dueDateHtml}
-                    </div>
-                </div>
+    ${dueDateHtml}
+    </div>
+    </div>
 
-                <div class="button-container">
-                    <button class="complete-btn">✔️</button>
-                    <button class="delete-btn">🗑️</button>
-                </div>
-            `;
+    <div class="button-container">
+    <button class="complete-btn">✔️</button>
+    <button class="delete-btn">🗑️</button>
+    </div>
+    `;
 
-            taskList.appendChild(li);
-        });
+    taskList.appendChild(li);
+    });
 
-        document.getElementById('totalTasks').innerText = data.stats.total;
-        document.getElementById('completedTasks').innerText = data.stats.completed;
-        document.getElementById('pendingTasks').innerText = data.stats.pending;
+    document.getElementById('totalTasks').innerText = data.stats.total;
+    document.getElementById('completedTasks').innerText = data.stats.completed;
+    document.getElementById('pendingTasks').innerText = data.stats.pending;
 
-        const rate = data.stats.completionRate.toFixed(1);
-        document.getElementById('completionRate').innerHTML = `${rate}%`;
-        document.querySelector('.progress-fill').style.width = `${data.stats.completionRate}%`;
+    const rate = data.stats.completionRate.toFixed(1);
+    document.getElementById('completionRate').innerHTML = `${rate}%`;
+    document.querySelector('.progress-fill').style.width = `${data.stats.completionRate}%`;
 
-        if (chart) {
-            chart.destroy();
-        }
+    if (chart) {
+    chart.destroy();
+    }
 
-        const ctx = document.getElementById('statusChart').getContext('2d');
+    const ctx = document.getElementById('statusChart').getContext('2d');
 
-        chart = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: ['Completed', 'Pending'],
-                datasets: [{
-                    data: [data.stats.completed, data.stats.pending],
-                    backgroundColor: ['#50c878', '#ef4444'],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            color: '#e5e7eb'
-                        }
-                    }
-                }
-            }
-        });
+    chart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+    labels: ['Completed', 'Pending'],
+    datasets: [{
+    data: [data.stats.completed, data.stats.pending],
+    backgroundColor: ['#50c878', '#ef4444'],
+    borderWidth: 0
+    }]
+    },
+    options: {
+    responsive: true,
+    plugins: {
+    legend: {
+    position: 'bottom',
+    labels: {
+    color: '#e5e7eb'
+    }
+    }
+    }
+    }
+    });
     }
 
     function escapeHtml(str) {
-        return str.replace(/[&<>]/g, function (m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
+    return str.replace(/[&<>]/g, function (m) {
+    if (m === '&') return '&amp;';
+    if (m === '<') return '&lt;';
+    if (m === '>') return '&gt;';
+    return m;
+    });
     }
 
     async function callHandler(handler, payload) {
-        const res = await fetch(`?handler=${handler}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'RequestVerificationToken': getCsrfToken()
-            },
-            body: JSON.stringify(payload)
-        });
+    const res = await fetch(`?handler=${handler}`, {
+    method: 'POST',
+    headers: {
+    'Content-Type': 'application/json',
+    'RequestVerificationToken': getCsrfToken()
+    },
+    body: JSON.stringify(payload)
+    });
 
-        if (res.ok) {
-            const data = await res.json();
-            refreshUI(data);
-        } else {
-            alert('Something went wrong');
-        }
+    if (res.ok) {
+    const data = await res.json();
+    refreshUI(data);
+    } else {
+    alert('Something went wrong');
+    }
     }
 
     document.getElementById('addTaskBtn').addEventListener('click', () => {
-        const input = document.getElementById('taskInput');
-        const prioritySelect = document.getElementById('prioritySelect');
-        const dueDateInput = document.getElementById('dueDateInput');
+    const input = document.getElementById('taskInput');
+    const prioritySelect = document.getElementById('prioritySelect');
+    const dueDateInput = document.getElementById('dueDateInput');
 
-        const title = input.value.trim();
-        const priority = prioritySelect.value;
-        const dueDate = dueDateInput.value;
+    const title = input.value.trim();
+    const priority = prioritySelect.value;
+    const dueDate = dueDateInput.value;
 
-        if (!title) {
-            return;
-        }
+    if (!title) {
+    return;
+    }
 
-        callHandler('AddTask', {
-            title,
-            priority,
-            dueDate
-        });
+    callHandler('AddTask', {
+    title,
+    priority,
+    dueDate
+    });
 
-        input.value = '';
-        dueDateInput.value = '';
-        prioritySelect.value = 'low';
+    input.value = '';
+    dueDateInput.value = '';
+    prioritySelect.value = 'low';
     });
 
     document.getElementById('taskList').addEventListener('click', (e) => {
-        const btn = e.target;
-        const li = btn.closest('li');
+    const btn = e.target;
+    const li = btn.closest('li');
 
-        if (!li) {
-            return;
-        }
+    if (!li) {
+    return;
+    }
 
-        const taskId = parseInt(li.dataset.id);
+    const taskId = parseInt(li.dataset.id);
 
-        if (btn.classList.contains('delete-btn')) {
-            callHandler('DeleteTask', { taskId });
-        } else if (btn.classList.contains('complete-btn')) {
-            callHandler('ToggleTask', { taskId });
-        }
+    if (btn.classList.contains('delete-btn')) {
+    callHandler('DeleteTask', { taskId });
+    } else if (btn.classList.contains('complete-btn')) {
+    callHandler('ToggleTask', { taskId });
+    }
     });
 
     window.addEventListener('load', () => {
-        const ctx = document.getElementById('statusChart').getContext('2d');
-        const completed = parseInt(document.getElementById('completedTasks').innerText);
-        const pending = parseInt(document.getElementById('pendingTasks').innerText);
+    const ctx = document.getElementById('statusChart').getContext('2d');
+    const completed = parseInt(document.getElementById('completedTasks').innerText);
+    const pending = parseInt(document.getElementById('pendingTasks').innerText);
 
-        chart = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: ['Completed', 'Pending'],
-                datasets: [{
-                    data: [completed, pending],
-                    backgroundColor: ['#50c878', '#ef4444'],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            color: '#e5e7eb'
-                        }
-                    }
-                }
-            }
-        });
+    chart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+    labels: ['Completed', 'Pending'],
+    datasets: [{
+    data: [completed, pending],
+    backgroundColor: ['#50c878', '#ef4444'],
+    borderWidth: 0
+    }]
+    },
+    options: {
+    responsive: true,
+    plugins: {
+    legend: {
+    position: 'bottom',
+    labels: {
+    color: '#e5e7eb'
+    }
+    }
+    }
+    }
+    });
     });
 </script>
