@@ -5,8 +5,5 @@ namespace CSE499_FlowForge_Smart_Task_Productivity_System.Pages;
 
 public class IndexModel : PageModel
 {
-    public void OnGet()
-    {
-
-    }
+    public void OnGet() { }
 }
