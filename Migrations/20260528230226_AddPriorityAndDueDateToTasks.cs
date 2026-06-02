@@ -17,32 +17,31 @@ namespace CSE499_FlowForge_Smart_Task_Productivity_System.Migrations
                 type: "TEXT",
                 nullable: true,
                 oldClrType: typeof(string),
-                oldType: "TEXT");
+                oldType: "TEXT"
+            );
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "DueDate",
                 table: "Tasks",
                 type: "TEXT",
-                nullable: true);
+                nullable: true
+            );
 
             migrationBuilder.AddColumn<string>(
                 name: "Priority",
                 table: "Tasks",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: ""
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "DueDate",
-                table: "Tasks");
+            migrationBuilder.DropColumn(name: "DueDate", table: "Tasks");
 
-            migrationBuilder.DropColumn(
-                name: "Priority",
-                table: "Tasks");
+            migrationBuilder.DropColumn(name: "Priority", table: "Tasks");
 
             migrationBuilder.AlterColumn<string>(
                 name: "UserId",
@@ -52,7 +51,8 @@ namespace CSE499_FlowForge_Smart_Task_Productivity_System.Migrations
                 defaultValue: "",
                 oldClrType: typeof(string),
                 oldType: "TEXT",
-                oldNullable: true);
+                oldNullable: true
+            );
         }
     }
 }

@@ -37,8 +37,21 @@ public class TrackerModel : PageModel
 
         if (string.IsNullOrWhiteSpace(request.Title))
         {
-            return BadRequest();
+            return BadRequest(new { message = "Task title cannot be empty." });
         }
+
+        request.Title = request.Title.Trim();
+
+        if (request.Title.Length > 100)
+        {
+            return BadRequest(new { message = "Task title cannot exceed 100 characters." });
+        }
+
+        if (!request.DueDate.HasValue)
+            return BadRequest(new { message = "Due date is required." });
+
+        if (request.DueDate.Value.Date < DateTime.Today)
+            return BadRequest(new { message = "Due date cannot be in the past." });
 
         var task = new TaskItem
         {
@@ -46,13 +59,55 @@ public class TrackerModel : PageModel
             IsCompleted = false,
             Priority = string.IsNullOrWhiteSpace(request.Priority) ? "low" : request.Priority,
             DueDate = request.DueDate,
-            UserId = userId
+            UserId = userId,
+            Category = request.Category
         };
 
         _context.Tasks.Add(task);
         await _context.SaveChangesAsync();
 
         return await GetUpdatedDataAsync();
+    }
+
+    public async Task<IActionResult> OnPostEditTaskAsync([FromBody] EditTaskRequest request)
+    {
+        string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var task = await _context.Tasks.FirstOrDefaultAsync(t =>
+            t.Id == request.TaskId && t.UserId == userId
+        );
+        if (task == null)
+            return NotFound();
+
+        if (string.IsNullOrWhiteSpace(request.Title))
+            return BadRequest(new { message = "Task title cannot be empty." });
+
+        request.Title = request.Title.Trim();
+        if (request.Title.Length > 100)
+            return BadRequest(new { message = "Task title cannot exceed 100 characters." });
+
+        if (!request.DueDate.HasValue)
+            return BadRequest(new { message = "Due date is required." });
+
+        if (request.DueDate.Value.Date < DateTime.Today)
+            return BadRequest(new { message = "Due date cannot be in the past." });
+
+        task.Title = request.Title;
+        task.Priority = request.Priority;
+        task.DueDate = request.DueDate;
+        task.Category = request.Category;
+
+        await _context.SaveChangesAsync();
+        return await GetUpdatedDataAsync();
+    }
+
+    public class EditTaskRequest
+    {
+        public int TaskId { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string Priority { get; set; } = "low";
+        public DateTime? DueDate { get; set; }
+
+        public string Category { get; set; } = "other";
     }
 
     public async Task<IActionResult> OnPostToggleTaskAsync([FromBody] TaskRequest request)
@@ -161,7 +216,6 @@ public class TrackerModel : PageModel
     private async Task<JsonResult> GetUpdatedDataAsync()
     {
         await LoadTasksAsync();
-
         DateTime today = DateTime.Today;
 
         return new JsonResult(
@@ -174,7 +228,11 @@ public class TrackerModel : PageModel
                     isCompleted = t.IsCompleted,
                     priority = t.Priority,
                     dueDate = t.DueDate?.ToString("yyyy-MM-dd"),
-                    isOverdue = !t.IsCompleted && t.DueDate.HasValue && t.DueDate.Value.Date < today
+                    isOverdue = !t.IsCompleted
+                        && t.DueDate.HasValue
+                        && t.DueDate.Value.Date < today,
+                    isDueToday = t.DueDate.HasValue && t.DueDate.Value.Date == today, // new
+                    category = t.Category
                 }),
                 stats = new
                 {
@@ -193,6 +251,7 @@ public class TrackerModel : PageModel
         public string Title { get; set; } = string.Empty;
         public string Priority { get; set; } = "low";
         public DateTime? DueDate { get; set; }
+        public string Category { get; set; } = "other"; // new
     }
 
     public class TaskRequest

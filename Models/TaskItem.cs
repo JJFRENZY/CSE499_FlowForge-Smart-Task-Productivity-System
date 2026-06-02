@@ -18,4 +18,5 @@ public class TaskItem
     public DateTime CreatedAt { get; set; } = DateTime.Now;
 
     public string? UserId { get; set; }
+    public string Category { get; set; } = "other";
 }
