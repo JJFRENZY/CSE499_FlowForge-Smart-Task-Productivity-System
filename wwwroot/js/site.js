@@ -9,6 +9,8 @@ const totalTasks = document.getElementById("totalTasks");
 const completedTasks = document.getElementById("completedTasks");
 const pendingTasks = document.getElementById("pendingTasks");
 const overdueTasks = document.getElementById("overdueTasks");
+const createdThisWeek = document.getElementById("createdThisWeek");
+const completedThisWeek = document.getElementById("completedThisWeek");
 
 const editModal = document.getElementById("editModal");
 const editTaskInput = document.getElementById("editTaskInput");
@@ -34,7 +36,16 @@ addTaskBtn.addEventListener("click", function () {
         return;
     }
 
-    createTask(taskText, false, priority, category, dueDate);
+    createTask(
+        taskText,
+        false,
+        priority,
+        category,
+        dueDate,
+        getTodayString(),
+        ""
+    );
+
     saveTasks();
     updateDashboardStats();
 
@@ -43,6 +54,11 @@ addTaskBtn.addEventListener("click", function () {
     prioritySelect.value = "low";
     categorySelect.value = "school";
 });
+
+function getTodayString() {
+    const today = new Date();
+    return today.toISOString().split("T")[0];
+}
 
 function isOverdue(dueDate) {
     if (!dueDate) {
@@ -56,6 +72,25 @@ function isOverdue(dueDate) {
     due.setHours(0, 0, 0, 0);
 
     return due < today;
+}
+
+function isThisWeek(dateString) {
+    if (!dateString) {
+        return false;
+    }
+
+    const date = new Date(dateString + "T00:00:00");
+    const today = new Date();
+
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - today.getDay());
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    endOfWeek.setHours(23, 59, 59, 999);
+
+    return date >= startOfWeek && date <= endOfWeek;
 }
 
 function getPriorityText(priority) {
@@ -86,12 +121,19 @@ function getCategoryText(category) {
     return "OTHER";
 }
 
-function createTask(taskText, completedStatus, priority, category, dueDate) {
+function createTask(taskText, completedStatus, priority, category, dueDate, createdDate, completedDate) {
     const li = document.createElement("li");
     li.classList.add("task-item");
 
+    li.dataset.createdDate = createdDate || getTodayString();
+    li.dataset.completedDate = completedDate || "";
+
     if (completedStatus) {
         li.classList.add("completed");
+
+        if (!li.dataset.completedDate) {
+            li.dataset.completedDate = getTodayString();
+        }
     }
 
     const leftContainer = document.createElement("div");
@@ -140,6 +182,12 @@ function createTask(taskText, completedStatus, priority, category, dueDate) {
 
     completeBtn.addEventListener("click", function () {
         li.classList.toggle("completed");
+
+        if (li.classList.contains("completed")) {
+            li.dataset.completedDate = getTodayString();
+        } else {
+            li.dataset.completedDate = "";
+        }
 
         const dueDateLabel = li.querySelector(".due-date");
         const currentDueDate = getTaskDueDate(li);
@@ -314,12 +362,17 @@ function getTaskDueDate(taskItem) {
 
 function updateDashboardStats() {
     const allTasks = document.querySelectorAll(".task-item");
+
     let completedCount = 0;
     let overdueCount = 0;
+    let createdThisWeekCount = 0;
+    let completedThisWeekCount = 0;
 
     allTasks.forEach(function (task) {
         const isCompleted = task.classList.contains("completed");
         const dueDate = getTaskDueDate(task);
+        const createdDate = task.dataset.createdDate;
+        const completedDate = task.dataset.completedDate;
 
         if (isCompleted) {
             completedCount++;
@@ -327,6 +380,14 @@ function updateDashboardStats() {
 
         if (!isCompleted && isOverdue(dueDate)) {
             overdueCount++;
+        }
+
+        if (isThisWeek(createdDate)) {
+            createdThisWeekCount++;
+        }
+
+        if (isThisWeek(completedDate)) {
+            completedThisWeekCount++;
         }
     });
 
@@ -337,6 +398,8 @@ function updateDashboardStats() {
     completedTasks.textContent = completedCount;
     pendingTasks.textContent = pendingCount;
     overdueTasks.textContent = overdueCount;
+    createdThisWeek.textContent = createdThisWeekCount;
+    completedThisWeek.textContent = completedThisWeekCount;
 }
 
 function saveTasks() {
@@ -349,7 +412,9 @@ function saveTasks() {
             completed: task.classList.contains("completed"),
             priority: getTaskPriority(task),
             category: getTaskCategory(task),
-            dueDate: getTaskDueDate(task)
+            dueDate: getTaskDueDate(task),
+            createdDate: task.dataset.createdDate || getTodayString(),
+            completedDate: task.dataset.completedDate || ""
         });
     });
 
@@ -371,7 +436,9 @@ function loadTasks() {
             task.completed,
             task.priority || "low",
             task.category || "school",
-            task.dueDate || ""
+            task.dueDate || "",
+            task.createdDate || getTodayString(),
+            task.completedDate || ""
         );
     });
 }
