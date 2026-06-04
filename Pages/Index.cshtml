@@ -1,65 +1,82 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "FlowForge – Smart Task Productivity";
+    ViewData["Title"] = "FlowForge";
 }
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewData["Title"]</title>
-    <link rel="stylesheet" href="~/css/main.css" />
+<header class="main-header">
+    <h1>FlowForge</h1>
+    <p>Smart Task Productivity System</p>
+</header>
 
-</head>
+<main>
+    <section class="task-container">
+        <h2>Add New Task</h2>
 
-<body>
+        <div class="task-form">
+            <input
+                type="text"
+                id="taskInput"
+                placeholder="Enter a task..."
+            >
 
-    <header class="main-header">
-        <h1>FlowForge ⚡</h1>
-        <p>Smart Task Productivity System</p>
-    </header>
+            <select id="prioritySelect">
+                <option value="low">Low Priority</option>
+                <option value="medium">Medium Priority</option>
+                <option value="high">High Priority</option>
+            </select>
 
-    <main>
-        <div class="landing-container">
-            <div class="split-layout">
-                <!-- Left: core value + features (aligned with project scope) -->
-                <div class="hero">
+            <select id="categorySelect">
+                <option value="school">School</option>
+                <option value="work">Work</option>
+                <option value="personal">Personal</option>
+                <option value="other">Other</option>
+            </select>
 
-                    <p>
-                        Tired of scattered tasks and missed deadlines?<br>
-                        FlowForge helps students & small teams work smarter — not just track tasks.
-                    </p>
-                    <ul class="feature-list">
-                        <li>📋 Task creation, categories & priorities</li>
-                        <li>📅 Due dates & weekly workload tracking</li>
-                        <li>📊 Productivity analytics & smart reminders</li>
-                        <li>👥 Optional team collaboration boards</li>
-                    </ul>
-                </div>
+            <input
+                type="date"
+                id="dueDateInput"
+            >
 
-                <!-- Right: registration / sign-in (prominent) -->
-                <div class="signup-card">
-                    <div>
-                        <a href="/Identity/Account/Register" class="signup-btn">✨ Sign up – it's free
-                            →</a>
-                            <div class="signin-link">
-                                Already have an account? <a href="/Identity/Account/Login">Sign in</a>
-                            </div>
-                            <div class="demo-note">
-                                🔐 Secure · ASP.NET Core backend · SQLite/SQL Server ready
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="footer-note">
-                    © 2025 FlowForge — Built for CSE 499 | Smart Task Productivity
-                </div>
-            </div>
-        </main>
+            <button id="addTaskBtn">
+                Add Task
+            </button>
+        </div>
 
-   
-    </body>
+        <ul id="taskList"></ul>
+    </section>
+</main>
 
-</html>
+<div id="editModal" class="modal-overlay hidden">
+    <div class="modal-card">
+        <h2>Edit Task</h2>
+
+        <label for="editTaskInput">Task Name</label>
+        <input type="text" id="editTaskInput">
+
+        <label for="editPrioritySelect">Priority</label>
+        <select id="editPrioritySelect">
+            <option value="low">Low Priority</option>
+            <option value="medium">Medium Priority</option>
+            <option value="high">High Priority</option>
+        </select>
+
+        <label for="editCategorySelect">Category</label>
+        <select id="editCategorySelect">
+            <option value="school">School</option>
+            <option value="work">Work</option>
+            <option value="personal">Personal</option>
+            <option value="other">Other</option>
+        </select>
+
+        <label for="editDueDateInput">Due Date</label>
+        <input type="date" id="editDueDateInput">
+
+        <div class="modal-buttons">
+            <button type="button" id="saveEditBtn">Save Changes</button>
+            <button type="button" id="cancelEditBtn">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/site.js" asp-append-version="true"></script>

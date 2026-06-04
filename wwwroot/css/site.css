@@ -81,7 +81,7 @@ main {
 }
 
 .task-form input,
-#prioritySelect {
+.task-form select {
   padding: 0.9rem 1rem;
   border-radius: 1rem;
   border: 1px solid #3a3a54;
@@ -92,7 +92,7 @@ main {
 }
 
 .task-form input:focus,
-#prioritySelect:focus {
+.task-form select:focus {
   border-color: #8b5cf6;
   box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25);
 }
@@ -160,9 +160,12 @@ main {
   display: flex;
   gap: 0.5rem;
   align-items: center;
+  flex-wrap: wrap;
 }
 
-.priority-label {
+.priority-label,
+.category-label,
+.due-date {
   padding: 0.25rem 0.6rem;
   border-radius: 999px;
   font-size: 0.75rem;
@@ -182,13 +185,25 @@ main {
   background-color: #ef4444;
 }
 
+.category-label.school {
+  background-color: #2563eb;
+}
+
+.category-label.work {
+  background-color: #9333ea;
+}
+
+.category-label.personal {
+  background-color: #ec4899;
+}
+
+.category-label.other {
+  background-color: #64748b;
+}
+
 .due-date {
   background: #374151;
   color: #d1d5db;
-  padding: 0.25rem 0.6rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: bold;
   transition: 0.2s;
 }
 
