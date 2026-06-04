@@ -21,6 +21,7 @@ const saveEditBtn = document.getElementById("saveEditBtn");
 const cancelEditBtn = document.getElementById("cancelEditBtn");
 
 let taskBeingEdited = null;
+let taskStatusChart = null;
 
 loadTasks();
 updateDashboardStats();
@@ -400,6 +401,46 @@ function updateDashboardStats() {
     overdueTasks.textContent = overdueCount;
     createdThisWeek.textContent = createdThisWeekCount;
     completedThisWeek.textContent = completedThisWeekCount;
+
+    updateTaskStatusChart(completedCount, pendingCount);
+}
+
+function updateTaskStatusChart(completedCount, pendingCount) {
+    const chartCanvas = document.getElementById("taskStatusChart");
+
+    if (!chartCanvas || typeof Chart === "undefined") {
+        return;
+    }
+
+    if (taskStatusChart) {
+        taskStatusChart.destroy();
+    }
+
+    taskStatusChart = new Chart(chartCanvas, {
+        type: "pie",
+        data: {
+            labels: ["Completed", "Pending"],
+            datasets: [
+                {
+                    data: [completedCount, pendingCount],
+                    backgroundColor: ["#50c878", "#ef4444"],
+                    borderColor: "#1e1e2f",
+                    borderWidth: 3
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: "bottom",
+                    labels: {
+                        color: "#ffffff"
+                    }
+                }
+            }
+        }
+    });
 }
 
 function saveTasks() {

@@ -157,6 +157,34 @@ main {
   color: #50c878;
 }
 
+.analytics-section {
+  margin-bottom: 2rem;
+}
+
+.analytics-section h2 {
+  margin-bottom: 1rem;
+}
+
+.chart-card {
+  background: #2a2a3c;
+  border: 1px solid #3a3a54;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  max-width: 420px;
+  margin-bottom: 2rem;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+}
+
+.chart-card h3 {
+  text-align: center;
+  color: #c4b5fd;
+  margin-bottom: 1rem;
+}
+
+#taskStatusChart {
+  max-width: 100%;
+}
+
 #taskList {
   list-style: none;
   padding: 0;

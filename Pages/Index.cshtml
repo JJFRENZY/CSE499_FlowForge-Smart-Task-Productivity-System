@@ -4,6 +4,8 @@
     ViewData["Title"] = "FlowForge";
 }
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <header class="main-header">
     <h1>FlowForge</h1>
     <p>Smart Task Productivity System</p>
@@ -72,6 +74,15 @@
             <div class="stat-card">
                 <h3>Completed This Week</h3>
                 <p id="completedThisWeek">0</p>
+            </div>
+        </section>
+
+        <section class="analytics-section">
+            <h2>Productivity Analytics</h2>
+
+            <div class="chart-card">
+                <h3>Completed vs Pending</h3>
+                <canvas id="taskStatusChart"></canvas>
             </div>
         </section>
 
