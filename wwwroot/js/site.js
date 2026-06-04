@@ -5,6 +5,11 @@ const categorySelect = document.getElementById("categorySelect");
 const dueDateInput = document.getElementById("dueDateInput");
 const taskList = document.getElementById("taskList");
 
+const totalTasks = document.getElementById("totalTasks");
+const completedTasks = document.getElementById("completedTasks");
+const pendingTasks = document.getElementById("pendingTasks");
+const overdueTasks = document.getElementById("overdueTasks");
+
 const editModal = document.getElementById("editModal");
 const editTaskInput = document.getElementById("editTaskInput");
 const editPrioritySelect = document.getElementById("editPrioritySelect");
@@ -16,6 +21,7 @@ const cancelEditBtn = document.getElementById("cancelEditBtn");
 let taskBeingEdited = null;
 
 loadTasks();
+updateDashboardStats();
 
 addTaskBtn.addEventListener("click", function () {
     const taskText = taskInput.value.trim();
@@ -30,6 +36,7 @@ addTaskBtn.addEventListener("click", function () {
 
     createTask(taskText, false, priority, category, dueDate);
     saveTasks();
+    updateDashboardStats();
 
     taskInput.value = "";
     dueDateInput.value = "";
@@ -146,6 +153,7 @@ function createTask(taskText, completedStatus, priority, category, dueDate) {
         }
 
         saveTasks();
+        updateDashboardStats();
     });
 
     const editBtn = document.createElement("button");
@@ -163,6 +171,7 @@ function createTask(taskText, completedStatus, priority, category, dueDate) {
     deleteBtn.addEventListener("click", function () {
         li.remove();
         saveTasks();
+        updateDashboardStats();
     });
 
     const buttonContainer = document.createElement("div");
@@ -243,6 +252,7 @@ saveEditBtn.addEventListener("click", function () {
     }
 
     saveTasks();
+    updateDashboardStats();
     closeEditModal();
 });
 
@@ -300,6 +310,33 @@ function getTaskDueDate(taskItem) {
     }
 
     return dueDateElement.textContent.replace("Due: ", "");
+}
+
+function updateDashboardStats() {
+    const allTasks = document.querySelectorAll(".task-item");
+    let completedCount = 0;
+    let overdueCount = 0;
+
+    allTasks.forEach(function (task) {
+        const isCompleted = task.classList.contains("completed");
+        const dueDate = getTaskDueDate(task);
+
+        if (isCompleted) {
+            completedCount++;
+        }
+
+        if (!isCompleted && isOverdue(dueDate)) {
+            overdueCount++;
+        }
+    });
+
+    const totalCount = allTasks.length;
+    const pendingCount = totalCount - completedCount;
+
+    totalTasks.textContent = totalCount;
+    completedTasks.textContent = completedCount;
+    pendingTasks.textContent = pendingCount;
+    overdueTasks.textContent = overdueCount;
 }
 
 function saveTasks() {
