@@ -12,6 +12,8 @@ const overdueTasks = document.getElementById("overdueTasks");
 const createdThisWeek = document.getElementById("createdThisWeek");
 const completedThisWeek = document.getElementById("completedThisWeek");
 
+const themeSelect = document.getElementById("themeSelect");
+
 const editModal = document.getElementById("editModal");
 const editTaskInput = document.getElementById("editTaskInput");
 const editPrioritySelect = document.getElementById("editPrioritySelect");
@@ -23,8 +25,16 @@ const cancelEditBtn = document.getElementById("cancelEditBtn");
 let taskBeingEdited = null;
 let taskStatusChart = null;
 
+loadTheme();
 loadTasks();
 updateDashboardStats();
+
+if (themeSelect) {
+    themeSelect.addEventListener("change", function () {
+        applyTheme(themeSelect.value);
+        localStorage.setItem("flowforgeTheme", themeSelect.value);
+    });
+}
 
 addTaskBtn.addEventListener("click", function () {
     const taskText = taskInput.value.trim();
@@ -55,6 +65,32 @@ addTaskBtn.addEventListener("click", function () {
     prioritySelect.value = "low";
     categorySelect.value = "school";
 });
+
+function loadTheme() {
+    const savedTheme = localStorage.getItem("flowforgeTheme") || "default";
+
+    applyTheme(savedTheme);
+
+    if (themeSelect) {
+        themeSelect.value = savedTheme;
+    }
+}
+
+function applyTheme(themeName) {
+    document.body.classList.remove(
+        "theme-default",
+        "theme-light",
+        "theme-dark",
+        "theme-forest",
+        "theme-ocean",
+        "theme-sunset",
+        "theme-frenzy"
+    );
+
+    document.body.classList.add(`theme-${themeName}`);
+
+    updateDashboardStats();
+}
 
 function getTodayString() {
     const today = new Date();
@@ -405,6 +441,30 @@ function updateDashboardStats() {
     updateTaskStatusChart(completedCount, pendingCount);
 }
 
+function getChartColors() {
+    if (document.body.classList.contains("theme-light")) {
+        return ["#16a34a", "#dc2626"];
+    }
+
+    if (document.body.classList.contains("theme-forest")) {
+        return ["#22c55e", "#84cc16"];
+    }
+
+    if (document.body.classList.contains("theme-ocean")) {
+        return ["#06b6d4", "#2563eb"];
+    }
+
+    if (document.body.classList.contains("theme-sunset")) {
+        return ["#f97316", "#e11d48"];
+    }
+
+    if (document.body.classList.contains("theme-frenzy")) {
+        return ["#000000", "#7c3aed"];
+    }
+
+    return ["#50c878", "#ef4444"];
+}
+
 function updateTaskStatusChart(completedCount, pendingCount) {
     const chartCanvas = document.getElementById("taskStatusChart");
 
@@ -416,6 +476,8 @@ function updateTaskStatusChart(completedCount, pendingCount) {
         taskStatusChart.destroy();
     }
 
+    const chartColors = getChartColors();
+
     taskStatusChart = new Chart(chartCanvas, {
         type: "pie",
         data: {
@@ -423,7 +485,7 @@ function updateTaskStatusChart(completedCount, pendingCount) {
             datasets: [
                 {
                     data: [completedCount, pendingCount],
-                    backgroundColor: ["#50c878", "#ef4444"],
+                    backgroundColor: chartColors,
                     borderColor: "#1e1e2f",
                     borderWidth: 3
                 }
@@ -435,7 +497,7 @@ function updateTaskStatusChart(completedCount, pendingCount) {
                 legend: {
                     position: "bottom",
                     labels: {
-                        color: "#ffffff"
+                        color: getComputedStyle(document.body).color
                     }
                 }
             }
