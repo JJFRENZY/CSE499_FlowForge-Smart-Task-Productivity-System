@@ -20,6 +20,7 @@ const suggestionList = document.getElementById("suggestionList");
 
 const weeklyGoalInput = document.getElementById("weeklyGoalInput");
 const saveGoalBtn = document.getElementById("saveGoalBtn");
+const resetGoalBtn = document.getElementById("resetGoalBtn");
 const goalProgressText = document.getElementById("goalProgressText");
 const goalProgressFill = document.getElementById("goalProgressFill");
 const goalPercentText = document.getElementById("goalPercentText");
@@ -60,6 +61,28 @@ if (saveGoalBtn) {
 
         localStorage.setItem("flowforgeWeeklyGoal", goalValue.toString());
         updateDashboardStats();
+    });
+}
+
+if (resetGoalBtn) {
+    resetGoalBtn.addEventListener("click", function () {
+        localStorage.removeItem("flowforgeWeeklyGoal");
+
+        if (weeklyGoalInput) {
+            weeklyGoalInput.value = "";
+        }
+
+        if (goalProgressText) {
+            goalProgressText.textContent = "No weekly goal set.";
+        }
+
+        if (goalProgressFill) {
+            goalProgressFill.style.width = "0%";
+        }
+
+        if (goalPercentText) {
+            goalPercentText.textContent = "0%";
+        }
     });
 }
 

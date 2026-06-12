@@ -278,7 +278,18 @@ main {
 body.theme-frenzy .task-form button {
   color: #522081;
 }
+#resetGoalBtn {
+  background: #ef4444;
+  color: white;
+}
 
+#resetGoalBtn:hover {
+  background: #dc2626;
+}
+
+body.theme-frenzy #resetGoalBtn {
+  color: #522081;
+}
 .task-form button:hover {
   transform: scale(0.97);
   background: var(--accent-hover);
