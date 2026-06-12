@@ -456,6 +456,19 @@ body.theme-frenzy .board-controls button {
   color: #522081;
 }
 
+#deleteBoardBtn {
+  background: #ef4444;
+  color: white;
+}
+
+#deleteBoardBtn:hover {
+  background: #dc2626;
+}
+
+body.theme-frenzy #deleteBoardBtn {
+  color: #522081;
+}
+
 .current-board-text {
   font-weight: bold;
   color: var(--accent-soft);

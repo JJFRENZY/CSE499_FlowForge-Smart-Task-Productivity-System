@@ -8,6 +8,7 @@ const taskList = document.getElementById("taskList");
 
 const boardNameInput = document.getElementById("boardNameInput");
 const createBoardBtn = document.getElementById("createBoardBtn");
+const deleteBoardBtn = document.getElementById("deleteBoardBtn");
 const activeBoardSelect = document.getElementById("activeBoardSelect");
 const currentBoardName = document.getElementById("currentBoardName");
 
@@ -82,6 +83,53 @@ if (createBoardBtn) {
 
         updateBoardDropdowns();
         updateDashboardStats();
+    });
+}
+
+if (deleteBoardBtn) {
+    deleteBoardBtn.addEventListener("click", function () {
+        if (activeBoard === "Personal") {
+            alert("The Personal board cannot be deleted.");
+            return;
+        }
+
+        const confirmed = confirm(
+            `Delete board "${activeBoard}"?\n\nAll tasks on this board will be moved to Personal.`
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        const allTasks = document.querySelectorAll(".task-item");
+
+        allTasks.forEach(function (task) {
+            if ((task.dataset.board || "Personal") === activeBoard) {
+                task.dataset.board = "Personal";
+
+                const boardLabel = task.querySelector(".board-label");
+
+                if (boardLabel) {
+                    boardLabel.textContent = "BOARD: Personal";
+                }
+            }
+        });
+
+        boards = boards.filter(function (board) {
+            return board !== activeBoard;
+        });
+
+        activeBoard = "Personal";
+
+        saveBoards();
+        saveTasks();
+
+        localStorage.setItem("flowforgeActiveBoard", activeBoard);
+
+        updateBoardDropdowns();
+        updateDashboardStats();
+
+        alert("Board deleted successfully.");
     });
 }
 
