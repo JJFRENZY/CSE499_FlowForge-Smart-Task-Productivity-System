@@ -15,6 +15,9 @@ const completedThisWeek = document.getElementById("completedThisWeek");
 const notificationPanel = document.getElementById("notificationPanel");
 const notificationList = document.getElementById("notificationList");
 
+const suggestionPanel = document.getElementById("suggestionPanel");
+const suggestionList = document.getElementById("suggestionList");
+
 const themeSelect = document.getElementById("themeSelect");
 
 const editModal = document.getElementById("editModal");
@@ -468,6 +471,125 @@ function updateNotifications() {
     }
 }
 
+function updateSmartSuggestions(completedCount, pendingCount, overdueCount, completedThisWeekCount) {
+    if (!suggestionPanel || !suggestionList) {
+        return;
+    }
+
+    suggestionList.innerHTML = "";
+
+    const allTasks = document.querySelectorAll(".task-item");
+
+    let highPriorityPending = 0;
+    let dueTodayCount = 0;
+    let dueSoonCount = 0;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    allTasks.forEach(function (task) {
+        if (task.classList.contains("completed")) {
+            return;
+        }
+
+        const priority = getTaskPriority(task);
+        const dueDate = getTaskDueDate(task);
+
+        if (priority === "high") {
+            highPriorityPending++;
+        }
+
+        if (dueDate) {
+            const due = new Date(dueDate + "T00:00:00");
+            const difference = Math.floor((due - today) / (1000 * 60 * 60 * 24));
+
+            if (difference === 0) {
+                dueTodayCount++;
+            }
+
+            if (difference > 0 && difference <= 3) {
+                dueSoonCount++;
+            }
+        }
+    });
+
+    const suggestions = [];
+
+    if (overdueCount > 0) {
+        suggestions.push({
+            type: "warning",
+            text: `You have ${overdueCount} overdue task(s). Consider handling those before starting new work.`
+        });
+    }
+
+    if (dueTodayCount >= 3) {
+        suggestions.push({
+            type: "warning",
+            text: `Today looks busy. You have ${dueTodayCount} task(s) due today.`
+        });
+    }
+
+    if (highPriorityPending >= 3) {
+        suggestions.push({
+            type: "priority",
+            text: `You have ${highPriorityPending} high-priority task(s) still pending. Try focusing on those first.`
+        });
+    }
+
+    if (pendingCount >= 8) {
+        suggestions.push({
+            type: "warning",
+            text: "Your pending task list is getting large. Consider completing or deleting lower-priority tasks."
+        });
+    }
+
+    if (dueSoonCount > 0) {
+        suggestions.push({
+            type: "info",
+            text: `${dueSoonCount} task(s) are coming up soon. Planning ahead could prevent last-minute work.`
+        });
+    }
+
+    if (completedThisWeekCount >= 5) {
+        suggestions.push({
+            type: "success",
+            text: `Great progress! You completed ${completedThisWeekCount} task(s) this week.`
+        });
+    }
+
+    if (completedCount === 0 && allTasks.length > 0) {
+        suggestions.push({
+            type: "info",
+            text: "You have tasks ready, but none completed yet. Try finishing one small task first."
+        });
+    }
+
+    if (suggestions.length === 0) {
+        suggestionPanel.classList.add("hidden");
+        return;
+    }
+
+    suggestionPanel.classList.remove("hidden");
+
+    suggestions.forEach(function (suggestion) {
+        const item = document.createElement("div");
+        item.classList.add("suggestion-item");
+
+        if (suggestion.type === "warning") {
+            item.classList.add("suggestion-warning");
+        } else if (suggestion.type === "priority") {
+            item.classList.add("suggestion-priority");
+        } else if (suggestion.type === "success") {
+            item.classList.add("suggestion-success");
+        } else {
+            item.classList.add("suggestion-info");
+        }
+
+        item.textContent = suggestion.text;
+        suggestionList.appendChild(item);
+    });
+}
+
 function updateDashboardStats() {
     const allTasks = document.querySelectorAll(".task-item");
 
@@ -511,6 +633,7 @@ function updateDashboardStats() {
 
     updateTaskStatusChart(completedCount, pendingCount);
     updateNotifications();
+    updateSmartSuggestions(completedCount, pendingCount, overdueCount, completedThisWeekCount);
 }
 
 function getChartColors() {
