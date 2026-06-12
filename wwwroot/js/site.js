@@ -12,6 +12,9 @@ const overdueTasks = document.getElementById("overdueTasks");
 const createdThisWeek = document.getElementById("createdThisWeek");
 const completedThisWeek = document.getElementById("completedThisWeek");
 
+const notificationPanel = document.getElementById("notificationPanel");
+const notificationList = document.getElementById("notificationList");
+
 const themeSelect = document.getElementById("themeSelect");
 
 const editModal = document.getElementById("editModal");
@@ -397,6 +400,74 @@ function getTaskDueDate(taskItem) {
     return dueDateElement.textContent.replace("Due: ", "");
 }
 
+function updateNotifications() {
+    if (!notificationPanel || !notificationList) {
+        return;
+    }
+
+    notificationList.innerHTML = "";
+
+    const allTasks = document.querySelectorAll(".task-item");
+
+    let overdueCount = 0;
+    let dueTodayCount = 0;
+    let upcomingCount = 0;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    allTasks.forEach(function (task) {
+        if (task.classList.contains("completed")) {
+            return;
+        }
+
+        const dueDate = getTaskDueDate(task);
+
+        if (!dueDate) {
+            return;
+        }
+
+        const due = new Date(dueDate + "T00:00:00");
+        const difference = Math.floor((due - today) / (1000 * 60 * 60 * 24));
+
+        if (difference < 0) {
+            overdueCount++;
+        } else if (difference === 0) {
+            dueTodayCount++;
+        } else if (difference <= 3) {
+            upcomingCount++;
+        }
+    });
+
+    if (overdueCount === 0 && dueTodayCount === 0 && upcomingCount === 0) {
+        notificationPanel.classList.add("hidden");
+        return;
+    }
+
+    notificationPanel.classList.remove("hidden");
+
+    if (overdueCount > 0) {
+        const alert = document.createElement("div");
+        alert.classList.add("notification-alert", "notification-overdue");
+        alert.textContent = `⚠ ${overdueCount} overdue task(s) require attention.`;
+        notificationList.appendChild(alert);
+    }
+
+    if (dueTodayCount > 0) {
+        const alert = document.createElement("div");
+        alert.classList.add("notification-alert", "notification-today");
+        alert.textContent = `📅 ${dueTodayCount} task(s) are due today.`;
+        notificationList.appendChild(alert);
+    }
+
+    if (upcomingCount > 0) {
+        const alert = document.createElement("div");
+        alert.classList.add("notification-alert", "notification-upcoming");
+        alert.textContent = `⏳ ${upcomingCount} task(s) are due within 3 days.`;
+        notificationList.appendChild(alert);
+    }
+}
+
 function updateDashboardStats() {
     const allTasks = document.querySelectorAll(".task-item");
 
@@ -439,6 +510,7 @@ function updateDashboardStats() {
     completedThisWeek.textContent = completedThisWeekCount;
 
     updateTaskStatusChart(completedCount, pendingCount);
+    updateNotifications();
 }
 
 function getChartColors() {

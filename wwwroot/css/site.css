@@ -284,6 +284,61 @@ body.theme-frenzy .task-form button {
   background: var(--accent-hover);
 }
 
+.notification-panel {
+  background: var(--card-bg);
+  border: 2px solid var(--accent);
+  border-radius: 1rem;
+  padding: 1rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+}
+
+.notification-panel.hidden {
+  display: none;
+}
+
+.notification-panel h2 {
+  margin-bottom: 1rem;
+  color: var(--accent-soft);
+}
+
+.notification-alert {
+  padding: 0.8rem 1rem;
+  border-radius: 0.8rem;
+  margin-bottom: 0.75rem;
+  font-weight: bold;
+}
+
+.notification-overdue {
+  background: rgba(239, 68, 68, 0.2);
+  border-left: 5px solid #ef4444;
+  color: #fecaca;
+}
+
+.notification-today {
+  background: rgba(245, 158, 11, 0.2);
+  border-left: 5px solid #f59e0b;
+  color: #fde68a;
+}
+
+.notification-upcoming {
+  background: rgba(59, 130, 246, 0.2);
+  border-left: 5px solid #3b82f6;
+  color: #bfdbfe;
+}
+
+body.theme-light .notification-overdue {
+  color: #991b1b;
+}
+
+body.theme-light .notification-today {
+  color: #92400e;
+}
+
+body.theme-light .notification-upcoming {
+  color: #1e40af;
+}
+
 .dashboard-stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
