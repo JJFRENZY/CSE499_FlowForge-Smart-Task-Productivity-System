@@ -18,13 +18,6 @@ const notificationList = document.getElementById("notificationList");
 const suggestionPanel = document.getElementById("suggestionPanel");
 const suggestionList = document.getElementById("suggestionList");
 
-const weeklyGoalInput = document.getElementById("weeklyGoalInput");
-const saveGoalBtn = document.getElementById("saveGoalBtn");
-const resetGoalBtn = document.getElementById("resetGoalBtn");
-const goalProgressText = document.getElementById("goalProgressText");
-const goalProgressFill = document.getElementById("goalProgressFill");
-const goalPercentText = document.getElementById("goalPercentText");
-
 const themeSelect = document.getElementById("themeSelect");
 
 const editModal = document.getElementById("editModal");
@@ -39,7 +32,6 @@ let taskBeingEdited = null;
 let taskStatusChart = null;
 
 loadTheme();
-loadWeeklyGoal();
 loadTasks();
 updateDashboardStats();
 
@@ -47,42 +39,6 @@ if (themeSelect) {
     themeSelect.addEventListener("change", function () {
         applyTheme(themeSelect.value);
         localStorage.setItem("flowforgeTheme", themeSelect.value);
-    });
-}
-
-if (saveGoalBtn) {
-    saveGoalBtn.addEventListener("click", function () {
-        const goalValue = parseInt(weeklyGoalInput.value);
-
-        if (isNaN(goalValue) || goalValue <= 0) {
-            alert("Please enter a valid weekly goal.");
-            return;
-        }
-
-        localStorage.setItem("flowforgeWeeklyGoal", goalValue.toString());
-        updateDashboardStats();
-    });
-}
-
-if (resetGoalBtn) {
-    resetGoalBtn.addEventListener("click", function () {
-        localStorage.removeItem("flowforgeWeeklyGoal");
-
-        if (weeklyGoalInput) {
-            weeklyGoalInput.value = "";
-        }
-
-        if (goalProgressText) {
-            goalProgressText.textContent = "No weekly goal set.";
-        }
-
-        if (goalProgressFill) {
-            goalProgressFill.style.width = "0%";
-        }
-
-        if (goalPercentText) {
-            goalPercentText.textContent = "0%";
-        }
     });
 }
 
@@ -140,38 +96,6 @@ function applyTheme(themeName) {
     document.body.classList.add(`theme-${themeName}`);
 
     updateDashboardStats();
-}
-
-function loadWeeklyGoal() {
-    const savedGoal = localStorage.getItem("flowforgeWeeklyGoal");
-
-    if (savedGoal && weeklyGoalInput) {
-        weeklyGoalInput.value = savedGoal;
-    }
-}
-
-function updateGoalTracking(completedThisWeekCount) {
-    if (!weeklyGoalInput || !goalProgressText || !goalProgressFill || !goalPercentText) {
-        return;
-    }
-
-    const savedGoal = parseInt(localStorage.getItem("flowforgeWeeklyGoal"));
-
-    if (isNaN(savedGoal) || savedGoal <= 0) {
-        goalProgressText.textContent = "No weekly goal set.";
-        goalProgressFill.style.width = "0%";
-        goalPercentText.textContent = "0%";
-        return;
-    }
-
-    weeklyGoalInput.value = savedGoal;
-
-    const rawPercent = (completedThisWeekCount / savedGoal) * 100;
-    const percent = Math.min(Math.round(rawPercent), 100);
-
-    goalProgressText.textContent = `${completedThisWeekCount} / ${savedGoal} tasks completed this week`;
-    goalProgressFill.style.width = `${percent}%`;
-    goalPercentText.textContent = `${percent}% complete`;
 }
 
 function getTodayString() {
@@ -707,7 +631,6 @@ function updateDashboardStats() {
     createdThisWeek.textContent = createdThisWeekCount;
     completedThisWeek.textContent = completedThisWeekCount;
 
-    updateGoalTracking(completedThisWeekCount);
     updateTaskStatusChart(completedCount, pendingCount);
     updateNotifications();
     updateSmartSuggestions(completedCount, pendingCount, overdueCount, completedThisWeekCount);

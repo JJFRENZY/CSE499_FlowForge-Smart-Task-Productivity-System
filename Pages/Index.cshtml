@@ -26,6 +26,22 @@
 
 <main>
     <section class="task-container">
+        <section class="board-section">
+            <h2>Shared Boards</h2>
+
+            <div class="board-controls">
+                <input type="text" id="boardNameInput" placeholder="Enter board name...">
+
+                <button id="createBoardBtn" type="button">Create / Join Board</button>
+
+                <label for="activeBoardSelect">Viewing:</label>
+
+                <select id="activeBoardSelect"></select>
+            </div>
+
+            <p id="currentBoardName" class="current-board-text">Current Board: Personal</p>
+        </section>
+
         <h2>Add New Task</h2>
 
         <div class="task-form">
@@ -43,6 +59,8 @@
                 <option value="personal">Personal</option>
                 <option value="other">Other</option>
             </select>
+
+            <select id="boardSelect"></select>
 
             <input type="date" id="dueDateInput">
 
@@ -153,6 +171,9 @@
             <option value="personal">Personal</option>
             <option value="other">Other</option>
         </select>
+
+        <label for="editBoardSelect">Board</label>
+        <select id="editBoardSelect"></select>
 
         <label for="editDueDateInput">Due Date</label>
         <input type="date" id="editDueDateInput">

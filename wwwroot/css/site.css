@@ -278,18 +278,7 @@ main {
 body.theme-frenzy .task-form button {
   color: #522081;
 }
-#resetGoalBtn {
-  background: #ef4444;
-  color: white;
-}
 
-#resetGoalBtn:hover {
-  background: #dc2626;
-}
-
-body.theme-frenzy #resetGoalBtn {
-  color: #522081;
-}
 .task-form button:hover {
   transform: scale(0.97);
   background: var(--accent-hover);
@@ -416,15 +405,79 @@ body.theme-light .suggestion-success {
   color: #50c878;
 }
 
+/* ==================================
+   SHARED BOARDS
+================================== */
+
+.board-section,
 .goal-section,
 .analytics-section {
   margin-bottom: 2rem;
 }
 
+.board-section h2,
 .goal-section h2,
 .analytics-section h2 {
   margin-bottom: 1rem;
 }
+
+.board-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.board-controls input,
+.board-controls select {
+  padding: 0.8rem;
+  border-radius: 0.8rem;
+  border: 1px solid var(--border-color);
+  background: var(--input-bg);
+  color: var(--input-text);
+}
+
+.board-controls button {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 0.8rem 1rem;
+  border-radius: 0.8rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.board-controls button:hover {
+  background: var(--accent-hover);
+}
+
+body.theme-frenzy .board-controls button {
+  color: #522081;
+}
+
+.current-board-text {
+  font-weight: bold;
+  color: var(--accent-soft);
+  margin-bottom: 1rem;
+}
+
+.board-label {
+  background: var(--accent);
+  color: white;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+body.theme-frenzy .board-label {
+  color: #522081;
+}
+
+/* ==================================
+   GOAL TRACKING
+================================== */
 
 .goal-card {
   padding: 1.5rem;
@@ -467,6 +520,19 @@ body.theme-light .suggestion-success {
 }
 
 body.theme-frenzy .goal-controls button {
+  color: #522081;
+}
+
+#resetGoalBtn {
+  background: #ef4444;
+  color: white;
+}
+
+#resetGoalBtn:hover {
+  background: #dc2626;
+}
+
+body.theme-frenzy #resetGoalBtn {
   color: #522081;
 }
 
