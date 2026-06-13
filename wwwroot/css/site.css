@@ -488,6 +488,19 @@ body.theme-frenzy .board-label {
   color: #522081;
 }
 
+.owner-label {
+  background: #0f766e;
+  color: white;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+body.theme-frenzy .owner-label {
+  color: #522081;
+}
+
 /* ==================================
    GOAL TRACKING
 ================================== */

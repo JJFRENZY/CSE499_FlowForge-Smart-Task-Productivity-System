@@ -3,6 +3,7 @@ const taskInput = document.getElementById("taskInput");
 const prioritySelect = document.getElementById("prioritySelect");
 const categorySelect = document.getElementById("categorySelect");
 const boardSelect = document.getElementById("boardSelect");
+const ownerSelect = document.getElementById("ownerSelect");
 const dueDateInput = document.getElementById("dueDateInput");
 const taskList = document.getElementById("taskList");
 
@@ -39,6 +40,7 @@ const editTaskInput = document.getElementById("editTaskInput");
 const editPrioritySelect = document.getElementById("editPrioritySelect");
 const editCategorySelect = document.getElementById("editCategorySelect");
 const editBoardSelect = document.getElementById("editBoardSelect");
+const editOwnerSelect = document.getElementById("editOwnerSelect");
 const editDueDateInput = document.getElementById("editDueDateInput");
 const saveEditBtn = document.getElementById("saveEditBtn");
 const cancelEditBtn = document.getElementById("cancelEditBtn");
@@ -184,6 +186,7 @@ addTaskBtn.addEventListener("click", function () {
     const priority = prioritySelect.value;
     const category = categorySelect.value;
     const board = boardSelect.value || activeBoard;
+    const owner = ownerSelect.value || "Unassigned";
     const dueDate = dueDateInput.value;
 
     if (taskText === "") {
@@ -197,6 +200,7 @@ addTaskBtn.addEventListener("click", function () {
         priority,
         category,
         board,
+        owner,
         dueDate,
         getTodayString(),
         ""
@@ -210,6 +214,7 @@ addTaskBtn.addEventListener("click", function () {
     prioritySelect.value = "low";
     categorySelect.value = "school";
     boardSelect.value = activeBoard;
+    ownerSelect.value = "Unassigned";
 });
 
 function loadTheme() {
@@ -384,13 +389,22 @@ function getCategoryText(category) {
     return "OTHER";
 }
 
-function createTask(taskText, completedStatus, priority, category, board, dueDate, createdDate, completedDate) {
+function getOwnerText(owner) {
+    if (!owner || owner === "Unassigned") {
+        return "ASSIGNED: Unassigned";
+    }
+
+    return `ASSIGNED: ${owner}`;
+}
+
+function createTask(taskText, completedStatus, priority, category, board, owner, dueDate, createdDate, completedDate) {
     const li = document.createElement("li");
     li.classList.add("task-item");
 
     li.dataset.createdDate = createdDate || getTodayString();
     li.dataset.completedDate = completedDate || "";
     li.dataset.board = board || "Personal";
+    li.dataset.owner = owner || "Unassigned";
 
     if (li.dataset.board !== activeBoard) {
         li.style.display = "none";
@@ -429,9 +443,14 @@ function createTask(taskText, completedStatus, priority, category, board, dueDat
     boardLabel.classList.add("board-label");
     boardLabel.textContent = `BOARD: ${li.dataset.board}`;
 
+    const ownerLabel = document.createElement("span");
+    ownerLabel.classList.add("owner-label");
+    ownerLabel.textContent = getOwnerText(li.dataset.owner);
+
     metaContainer.appendChild(priorityLabel);
     metaContainer.appendChild(categoryLabel);
     metaContainer.appendChild(boardLabel);
+    metaContainer.appendChild(ownerLabel);
 
     if (dueDate !== "") {
         const dueDateLabel = document.createElement("span");
@@ -515,6 +534,7 @@ function openEditModal(taskItem) {
     editPrioritySelect.value = getTaskPriority(taskItem);
     editCategorySelect.value = getTaskCategory(taskItem);
     editBoardSelect.value = taskItem.dataset.board || "Personal";
+    editOwnerSelect.value = taskItem.dataset.owner || "Unassigned";
     editDueDateInput.value = getTaskDueDate(taskItem);
 
     editModal.classList.remove("hidden");
@@ -534,6 +554,7 @@ saveEditBtn.addEventListener("click", function () {
     const newPriority = editPrioritySelect.value;
     const newCategory = editCategorySelect.value;
     const newBoard = editBoardSelect.value || "Personal";
+    const newOwner = editOwnerSelect.value || "Unassigned";
     const newDueDate = editDueDateInput.value;
 
     if (newText === "") {
@@ -556,10 +577,16 @@ saveEditBtn.addEventListener("click", function () {
     categoryLabel.textContent = getCategoryText(newCategory);
 
     taskBeingEdited.dataset.board = newBoard;
+    taskBeingEdited.dataset.owner = newOwner;
 
     const boardLabel = taskBeingEdited.querySelector(".board-label");
     if (boardLabel) {
         boardLabel.textContent = `BOARD: ${newBoard}`;
+    }
+
+    const ownerLabel = taskBeingEdited.querySelector(".owner-label");
+    if (ownerLabel) {
+        ownerLabel.textContent = getOwnerText(newOwner);
     }
 
     const metaContainer = taskBeingEdited.querySelector(".meta-container");
@@ -640,6 +667,10 @@ function getTaskDueDate(taskItem) {
     }
 
     return dueDateElement.textContent.replace("Due: ", "");
+}
+
+function getTaskOwner(taskItem) {
+    return taskItem.dataset.owner || "Unassigned";
 }
 
 function getVisibleTasks() {
@@ -738,6 +769,7 @@ function updateSmartSuggestions(completedCount, pendingCount, overdueCount, comp
     let highPriorityPending = 0;
     let dueTodayCount = 0;
     let dueSoonCount = 0;
+    let unassignedCount = 0;
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -748,10 +780,15 @@ function updateSmartSuggestions(completedCount, pendingCount, overdueCount, comp
         }
 
         const priority = getTaskPriority(task);
+        const owner = getTaskOwner(task);
         const dueDate = getTaskDueDate(task);
 
         if (priority === "high") {
             highPriorityPending++;
+        }
+
+        if (owner === "Unassigned") {
+            unassignedCount++;
         }
 
         if (dueDate) {
@@ -774,6 +811,13 @@ function updateSmartSuggestions(completedCount, pendingCount, overdueCount, comp
         suggestions.push({
             type: "warning",
             text: `This board has ${overdueCount} overdue task(s). Handle those before starting new work.`
+        });
+    }
+
+    if (unassignedCount > 0) {
+        suggestions.push({
+            type: "info",
+            text: `${unassignedCount} task(s) on this board are unassigned. Assigning owners can improve teamwork.`
         });
     }
 
@@ -967,6 +1011,7 @@ function saveTasks() {
             priority: getTaskPriority(task),
             category: getTaskCategory(task),
             board: task.dataset.board || "Personal",
+            owner: task.dataset.owner || "Unassigned",
             dueDate: getTaskDueDate(task),
             createdDate: task.dataset.createdDate || getTodayString(),
             completedDate: task.dataset.completedDate || ""
@@ -997,6 +1042,7 @@ function loadTasks() {
             task.priority || "low",
             task.category || "school",
             task.board || "Personal",
+            task.owner || "Unassigned",
             task.dueDate || "",
             task.createdDate || getTodayString(),
             task.completedDate || ""
