@@ -8,205 +8,200 @@
 <meta name="csrf-token" content="@requestToken" />
 
 @model TrackerModel
-
 @{
-    ViewData["Title"] = "Task Dashboard";
+    ViewData["Title"] = "FlowForge";
 }
 
-<link rel="stylesheet" href="~/css/tracker.css" />
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<header>
-    <div>
-        <h1>📊 Task Dashboard</h1>
-        <p>Your personal task hub</p>
+<header class="main-header">
+    <h1>FlowForge</h1>
+    <p>Smart Task Productivity System</p>
+
+    <div class="theme-control">
+        <label for="themeSelect">Theme:</label>
+        <select id="themeSelect">
+            <option value="default">Default</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+            <option value="forest">Forest</option>
+            <option value="ocean">Ocean</option>
+            <option value="sunset">Sunset</option>
+            <option value="frenzy">Frenzy</option>
+        </select>
     </div>
-    <form asp-area="Identity" asp-page="/Account/Logout" method="post">
-        <button type="submit">🚪 Logout</button>
-    </form>
 </header>
 
 <main>
-    <div class="task-container">
-        <!-- ========= TASK MANAGER ========= -->
-        <h2>✏️ Manage Tasks</h2>
+    <section class="task-container">
+        <section class="board-section">
+            <h2>Shared Boards</h2>
+
+            <div class="board-controls">
+                <input type="text" id="boardNameInput" placeholder="Enter board name...">
+
+                <button id="createBoardBtn" type="button">Create / Join Board</button>
+
+                <button id="deleteBoardBtn" type="button">Delete Current Board</button>
+
+                <label for="activeBoardSelect">Viewing:</label>
+
+                <select id="activeBoardSelect"></select>
+            </div>
+
+            <p id="currentBoardName" class="current-board-text">Current Board: Personal</p>
+        </section>
+
+        <h2>Add New Task</h2>
+
         <div class="task-form">
-            <input type="text" id="taskInput" placeholder="Write a new task..." />
-            <button id="addTaskBtn">➕ Add Task</button>
+            <input type="text" id="taskInput" placeholder="Enter a task...">
+
+            <select id="prioritySelect">
+                <option value="low">Low Priority</option>
+                <option value="medium">Medium Priority</option>
+                <option value="high">High Priority</option>
+            </select>
+
+            <select id="categorySelect">
+                <option value="school">School</option>
+                <option value="work">Work</option>
+                <option value="personal">Personal</option>
+                <option value="other">Other</option>
+            </select>
+
+            <select id="boardSelect"></select>
+
+            <select id="ownerSelect">
+                <option value="Unassigned">Unassigned</option>
+                <option value="Jackson">Jackson</option>
+                <option value="Mduduzi">Mduduzi</option>
+                <option value="Nasibu">Nasibu</option>
+            </select>
+
+            <input type="date" id="dueDateInput">
+
+            <button id="addTaskBtn">Add Task</button>
         </div>
 
-        <ul id="taskList">
-            @foreach (var task in Model.Tasks)
-            {
-                <li data-id="@task.Id" class="@(task.IsCompleted ? "completed" : "")">
-                    <span>@task.Title</span>
-                    <div class="button-container">
-                        <button class="complete-btn">✔️</button>
-                        <button class="delete-btn">🗑️</button>
-                    </div>
-                </li>
-            }
-        </ul>
-        <hr class="divider" />
+        <section id="notificationPanel" class="notification-panel hidden">
+            <h2>Smart Reminders</h2>
+            <div id="notificationList"></div>
+        </section>
 
-        <div class="chart-flex">
+        <section id="suggestionPanel" class="suggestion-panel hidden">
+            <h2>Smart Suggestions</h2>
+            <div id="suggestionList"></div>
+        </section>
 
-            <div class="dashboard-grid">
-                <div class="stat-card">
-                    <h3>📋 Total Tasks:</h3>
-                    <p id="totalTasks">@Model.TotalTasks</p>
-                </div>
-                <div class="stat-card">
-                    <h3>✅ Completed:</h3>
-                    <p id="completedTasks">@Model.CompletedTasks</p>
-                </div>
-                <div class="stat-card">
-                    <h3>⏳ Pending:</h3>
-                    <p id="pendingTasks">@Model.PendingTasks</p>
-                </div>
-                <div class="stat-card">
-                    <h3>📈 Completion Rate:</h3>
-                    <p id="completionRate">@Model.CompletionRate.ToString("F1")%</p>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: @Model.CompletionRate%"></div>
-                    </div>
-                </div>
-
-            </div>
-            <div class="chart-wrapper">
-                <canvas id="statusChart" width="100" height="100"></canvas>
+        <section class="dashboard-stats">
+            <div class="stat-card">
+                <h3>Total Tasks</h3>
+                <p id="totalTasks">0</p>
             </div>
 
-        </div>
+            <div class="stat-card">
+                <h3>Completed</h3>
+                <p id="completedTasks">0</p>
+            </div>
 
-    </div>
+            <div class="stat-card">
+                <h3>Pending</h3>
+                <p id="pendingTasks">0</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Overdue</h3>
+                <p id="overdueTasks">0</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Created This Week</h3>
+                <p id="createdThisWeek">0</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Completed This Week</h3>
+                <p id="completedThisWeek">0</p>
+            </div>
+        </section>
+
+        <section class="goal-section">
+            <h2>Weekly Goal Tracking</h2>
+
+            <div class="goal-card">
+                <div class="goal-controls">
+                    <label for="weeklyGoalInput">Weekly Goal:</label>
+
+                    <input type="number" id="weeklyGoalInput" min="1" placeholder="Example: 10">
+
+                    <button id="saveGoalBtn" type="button">Set Goal</button>
+
+                    <button id="resetGoalBtn" type="button">Reset Goal</button>
+                </div>
+
+                <p id="goalProgressText">No weekly goal set.</p>
+
+                <div class="goal-progress-bar">
+                    <div id="goalProgressFill" class="goal-progress-fill"></div>
+                </div>
+
+                <p id="goalPercentText">0%</p>
+            </div>
+        </section>
+
+        <section class="analytics-section">
+            <h2>Productivity Analytics</h2>
+
+            <div class="chart-card">
+                <h3>Completed vs Pending</h3>
+                <canvas id="taskStatusChart"></canvas>
+            </div>
+        </section>
+
+        <ul id="taskList"></ul>
+    </section>
 </main>
 
-<script>
-    // Anti-forgery token for AJAX POSTs
-    const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+<div id="editModal" class="modal-overlay hidden">
+    <div class="modal-card">
+        <h2>Edit Task</h2>
 
-    
-    function getCsrfToken() {
-    return document.querySelector('meta[name="csrf-token"]')?.content || "";
-    }
+        <label for="editTaskInput">Task Name</label>
+        <input type="text" id="editTaskInput">
 
-    let chart;
+        <label for="editPrioritySelect">Priority</label>
+        <select id="editPrioritySelect">
+            <option value="low">Low Priority</option>
+            <option value="medium">Medium Priority</option>
+            <option value="high">High Priority</option>
+        </select>
 
-    // Helper to update UI (task list + dashboard stats + chart)
-    function refreshUI(data) {
-    // update task list
-    const taskList = document.getElementById('taskList');
-    taskList.innerHTML = '';
-    data.tasks.forEach(task => {
-    const li = document.createElement('li');
-    li.dataset.id = task.id;
-    if (task.isCompleted) li.classList.add('completed');
-    li.innerHTML = `
-    <span>${escapeHtml(task.title)}</span>
-    <div class="button-container">
-    <button class="complete-btn">✔️</button>
-    <button class="delete-btn">🗑️</button>
+        <label for="editCategorySelect">Category</label>
+        <select id="editCategorySelect">
+            <option value="school">School</option>
+            <option value="work">Work</option>
+            <option value="personal">Personal</option>
+            <option value="other">Other</option>
+        </select>
+
+        <label for="editBoardSelect">Board</label>
+        <select id="editBoardSelect"></select>
+
+        <label for="editOwnerSelect">Assigned To</label>
+        <select id="editOwnerSelect">
+            <option value="Unassigned">Unassigned</option>
+            <option value="Jackson">Jackson</option>
+            <option value="Mduduzi">Mduduzi</option>
+            <option value="Nasibu">Nasibu</option>
+        </select>
+
+        <label for="editDueDateInput">Due Date</label>
+        <input type="date" id="editDueDateInput">
+
+        <div class="modal-buttons">
+            <button type="button" id="saveEditBtn">Save Changes</button>
+            <button type="button" id="cancelEditBtn">Cancel</button>
+        </div>
     </div>
-    `;
-    taskList.appendChild(li);
-    });
-
-    // update stats cards
-    document.getElementById('totalTasks').innerText = data.stats.total;
-    document.getElementById('completedTasks').innerText = data.stats.completed;
-    document.getElementById('pendingTasks').innerText = data.stats.pending;
-    const rate = data.stats.completionRate.toFixed(1);
-    document.getElementById('completionRate').innerHTML = `${rate}%`;
-    document.querySelector('.progress-fill').style.width = `${data.stats.completionRate}%`;
-
-    // update pie chart
-    if (chart) chart.destroy();
-    const ctx = document.getElementById('statusChart').getContext('2d');
-    chart = new Chart(ctx, {
-    type: 'pie',
-    data: {
-    labels: ['Completed', 'Pending'],
-    datasets: [{
-    data: [data.stats.completed, data.stats.pending],
-    backgroundColor: ['#50c878', '#ef4444'],
-    borderWidth: 0
-    }]
-    },
-    options: {
-    responsive: true,
-    plugins: { legend: { position: 'bottom', labels: { color: '#e5e7eb' } } }
-    }
-    });
-    }
-
-    function escapeHtml(str) {
-    return str.replace(/[&<>]/g, function (m) {
-    if (m === '&') return '&amp;';
-    if (m === '<') return '&lt;';
-    if (m === '>') return '&gt;';
-    return m;
-    });
-    }
-
-    // API calls
-    async function callHandler(handler, payload) {
-    const res = await fetch(`?handler=${handler}`, {
-    method: 'POST',
-    headers: {
-    'Content-Type': 'application/json',
-    'RequestVerificationToken': getCsrfToken()
-    },
-    body: JSON.stringify(payload)
-    });
-    if (res.ok) {
-    const data = await res.json();
-    refreshUI(data);
-    } else {
-    alert('Something went wrong');
-    }
-    }
-
-    // Event listeners
-    document.getElementById('addTaskBtn').addEventListener('click', () => {
-    const input = document.getElementById('taskInput');
-    const title = input.value.trim();
-    if (!title) return;
-    callHandler('AddTask', { title });
-    input.value = '';
-    });
-
-    document.getElementById('taskList').addEventListener('click', (e) => {
-    const btn = e.target;
-    const li = btn.closest('li');
-    if (!li) return;
-    const taskId = parseInt(li.dataset.id);
-    if (btn.classList.contains('delete-btn')) {
-    callHandler('DeleteTask', { taskId });
-    } else if (btn.classList.contains('complete-btn')) {
-    callHandler('ToggleTask', { taskId });
-    }
-    });
-
-    // initial chart render
-    window.addEventListener('load', () => {
-    const ctx = document.getElementById('statusChart').getContext('2d');
-    const completed = parseInt(document.getElementById('completedTasks').innerText);
-    const pending = parseInt(document.getElementById('pendingTasks').innerText);
-    chart = new Chart(ctx, {
-    type: 'pie',
-    data: {
-    labels: ['Completed', 'Pending'],
-    datasets: [{
-    data: [completed, pending],
-    backgroundColor: ['#50c878', '#ef4444'],
-    borderWidth: 0
-    }]
-    },
-    options: {
-    responsive: true,
-    plugins: { legend: { position: 'bottom', labels: { color: '#e5e7eb' } } }
-    }
-    });
-    });
-</script>
+</div>
